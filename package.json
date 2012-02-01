@@ -16,5 +16,8 @@
     "node": "~0.6.3"
   },
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "mocha": "~> 0.10.2"
+    , "coffee-script": "~> 1.1.3"
+  }
 }
