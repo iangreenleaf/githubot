@@ -1,0 +1,20 @@
+{
+  "author": "Ian Young <ian.greenleaf@gmail.com>",
+  "name": "hubot-github",
+  "description": "Github API access, tailored for Hubot",
+  "version": "0.0.1",
+  "homepage": "https://github.com/iangreenleaf/hubot-github",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:iangreenleaf/hubot-github.git"
+  },
+  "main": "./hubot-github",
+  "scripts": {
+    "test": "make test"
+  },
+  "engines": {
+    "node": "~0.6.3"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
