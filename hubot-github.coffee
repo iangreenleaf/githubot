@@ -5,7 +5,8 @@ module.exports = (robot) -> {
     repo = repo.toLowerCase()
     return repo unless repo.indexOf("/") is -1
     unless (user = process.env.HUBOT_GITHUB_USER)?
-      throw "Default Github user not specified"
+      robot.logger.error "Default Github user not specified"
+      return repo
     "#{user}/#{repo}"
   get: (url) ->
     if url[0..3] isnt "http"
