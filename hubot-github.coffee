@@ -1,6 +1,6 @@
 http = require "scoped-http-client"
 
-module.exports = {
+module.exports = (robot) -> {
   qualified_repo: (repo) ->
     repo = repo.toLowerCase()
     return repo unless repo.indexOf("/") is -1

@@ -1,6 +1,4 @@
-assert = require "assert"
-nock = require "nock"
-gh = require ".."
+[ gh, assert, nock ] = require "./test_helper"
 
 describe "github api requests", ->
   describe "request", ->

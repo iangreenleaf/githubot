@@ -1,5 +1,4 @@
-assert = require "assert"
-gh = require ".."
+[ gh, assert, nock ] = require "./test_helper"
 
 describe "qualified_repo", ->
   it "returns full name when given full name", ->
