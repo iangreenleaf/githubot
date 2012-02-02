@@ -20,3 +20,11 @@ describe "github api requests", ->
       gh.get("repos/foo/bar/branches") success done
     it "accepts a path (leading slash)", (done) ->
       gh.get("/repos/foo/bar/branches") success done
+    it "includes oauth token if exists", (done) ->
+      process.env.HUBOT_GITHUB_TOKEN = "789abc"
+      network.matchHeader("Authorization", "token 789abc")
+      gh.get("/repos/foo/bar/branches") success done
+      delete process.env.HUBOT_GITHUB_TOKEN
+    it "includes accept header", (done) ->
+      network.matchHeader('Accept', 'application/json')
+      gh.get("/repos/foo/bar/branches") success done
