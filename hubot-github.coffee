@@ -8,5 +8,8 @@ module.exports = {
       throw "Default Github user not specified"
     "#{user}/#{repo}"
   get: (url) ->
+    if url[0..3] isnt "http"
+      url = "/#{url}" unless url[0] is "/"
+      url = "https://api.github.com#{url}"
     http.create(url).get()
 }

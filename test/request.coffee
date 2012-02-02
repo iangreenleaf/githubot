@@ -16,3 +16,7 @@ describe "github api requests", ->
         .reply(200, [])
     it "accepts a full url", (done) ->
       gh.get("https://api.github.com/repos/foo/bar/branches") success done
+    it "accepts a path", (done) ->
+      gh.get("repos/foo/bar/branches") success done
+    it "accepts a path (leading slash)", (done) ->
+      gh.get("/repos/foo/bar/branches") success done
