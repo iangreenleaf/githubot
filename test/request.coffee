@@ -1,4 +1,4 @@
-[ gh, assert, nock ] = require "./test_helper"
+[ gh, assert, nock, mock_robot ] = require "./test_helper"
 
 describe "github api requests", ->
   describe "request", ->
@@ -26,3 +26,13 @@ describe "github api requests", ->
     it "includes accept header", (done) ->
       network.matchHeader('Accept', 'application/json')
       gh.get("/repos/foo/bar/branches") success done
+
+  describe "errors", ->
+    network = null
+    beforeEach ->
+      network = nock("https://api.github.com").get("/foo")
+    it "complains about bad response", (done) ->
+      network.reply(401, message: "Bad credentials")
+      gh.get("/foo") ->
+        assert.ok /bad credentials/i.exec mock_robot.logs.error.pop()
+        done()
