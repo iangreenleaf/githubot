@@ -40,3 +40,16 @@ describe "github api requests", ->
       gh.get("/foo") ->
         assert.ok /bad credentials/i.exec mock_robot.logs.error.pop()
         done()
+    it "complains about client errors", (done) ->
+      mock = {
+        header: -> mock,
+        get: () -> (cb) ->
+          cb new Error "Kablooie!"
+      }
+      http = require "scoped-http-client"
+      http._old_create = http.create
+      http.create = -> mock
+      gh.get("/foo") ->
+        assert.ok /kablooie/i.exec mock_robot.logs.error.pop()
+        done()
+      http.create = http._old_create
