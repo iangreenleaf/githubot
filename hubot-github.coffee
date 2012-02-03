@@ -8,14 +8,14 @@ module.exports = github = (robot) -> {
       robot.logger.error "Default Github user not specified"
       return repo
     "#{user}/#{repo}"
-  get: (url) ->
+  request: (verb, url) ->
     if url[0..3] isnt "http"
       url = "/#{url}" unless url[0] is "/"
       url = "https://api.github.com#{url}"
     req = http.create(url).header("Accept", "application/json")
     req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
     return (cb) ->
-      req.get() (err, res, body) ->
+      req[verb.toLowerCase()]() (err, res, body) ->
         data = null
         if err?
           robot.logger.error err
@@ -24,6 +24,10 @@ module.exports = github = (robot) -> {
         else
           data = JSON.parse body
         cb data
+  get: (url) ->
+    @request "GET", url
+  post: (url) ->
+    @request "POST", url
   branches: (repo) ->
     @get("https://api.github.com/repos/#{@qualified_repo repo}/branches")
 }
