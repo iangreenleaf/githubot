@@ -2,16 +2,16 @@
 
 describe "github api requests", ->
   describe "request", ->
+    response = [ { name: "foo", commit: { sha: "abcdef", url: "xxx" } } ]
     network = null
     success = (done) ->
-      (err, res, body) ->
-        throw err if err?
+      (body) ->
         network.done()
         done()
     beforeEach ->
       network = nock("https://api.github.com")
         .get("/repos/foo/bar/branches")
-        .reply(200, [])
+        .reply(200, response)
     it "accepts a full url", (done) ->
       gh.get("https://api.github.com/repos/foo/bar/branches") success done
     it "accepts a path", (done) ->
@@ -26,6 +26,10 @@ describe "github api requests", ->
     it "includes accept header", (done) ->
       network.matchHeader('Accept', 'application/json')
       gh.get("/repos/foo/bar/branches") success done
+    it "returns parsed json", (done) ->
+      gh.get("/repos/foo/bar/branches") (data) ->
+        assert.deepEqual response, data
+        done()
 
   describe "errors", ->
     network = null

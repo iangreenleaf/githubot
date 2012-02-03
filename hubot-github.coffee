@@ -16,7 +16,8 @@ module.exports = (robot) -> {
     req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
     return (cb) ->
       req.get() (err, res, body) ->
+        data = JSON.parse body
         if res.statusCode != 200
           robot.logger.error "#{res.statusCode} #{JSON.parse(body).message}"
-        cb err, res, body
+        cb data
 }
