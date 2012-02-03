@@ -1,6 +1,6 @@
 http = require "scoped-http-client"
 
-module.exports = (robot) -> {
+module.exports = github = (robot) -> {
   qualified_repo: (repo) ->
     repo = repo.toLowerCase()
     return repo unless repo.indexOf("/") is -1
@@ -24,4 +24,6 @@ module.exports = (robot) -> {
         else
           data = JSON.parse body
         cb data
+  branches: (repo) ->
+    @get("https://api.github.com/repos/#{@qualified_repo repo}/branches")
 }

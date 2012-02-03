@@ -1,6 +1,6 @@
 [ gh, assert, nock, mock_robot ] = require "./test_helper"
 
-describe "github api requests", ->
+describe "github api", ->
   describe "request", ->
     response = [ { name: "foo", commit: { sha: "abcdef", url: "xxx" } } ]
     network = null
