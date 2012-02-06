@@ -1,49 +1,54 @@
 [ gh, assert, nock, mock_robot ] = require "./test_helper"
 
 describe "github api", ->
-  describe "request", ->
-    response = [ { name: "foo", commit: { sha: "abcdef", url: "xxx" } } ]
+  describe "general purpose", ->
     network = null
     success = (done) ->
       (body) ->
         network.done()
         done()
-    beforeEach ->
-      network = nock("https://api.github.com")
-        .get("/repos/foo/bar/branches")
-        .reply(200, response)
-    it "accepts a full url", (done) ->
-      gh.request("GET", "https://api.github.com/repos/foo/bar/branches") success done
-    it "accepts a path", (done) ->
-      gh.request("GET", "repos/foo/bar/branches") success done
-    it "accepts a path (leading slash)", (done) ->
-      gh.request("GET", "repos/foo/bar/branches") success done
-    it "includes oauth token if exists", (done) ->
-      process.env.HUBOT_GITHUB_TOKEN = "789abc"
-      network.matchHeader("Authorization", "token 789abc")
-      gh.request("GET", "repos/foo/bar/branches") success done
-      delete process.env.HUBOT_GITHUB_TOKEN
-    it "includes accept header", (done) ->
-      network.matchHeader('Accept', 'application/json')
-      gh.request("GET", "repos/foo/bar/branches") success done
-    it "returns parsed json", (done) ->
-      gh.request("GET", "repos/foo/bar/branches") (data) ->
-        assert.deepEqual response, data
-        done()
+    describe "request", ->
+      response = [ { name: "foo", commit: { sha: "abcdef", url: "xxx" } } ]
+      beforeEach ->
+        network = nock("https://api.github.com")
+          .get("/repos/foo/bar/branches")
+          .reply(200, response)
+      it "accepts a full url", (done) ->
+        gh.request("GET", "https://api.github.com/repos/foo/bar/branches") success done
+      it "accepts a path", (done) ->
+        gh.request("GET", "repos/foo/bar/branches") success done
+      it "accepts a path (leading slash)", (done) ->
+        gh.request("GET", "repos/foo/bar/branches") success done
+      it "includes oauth token if exists", (done) ->
+        process.env.HUBOT_GITHUB_TOKEN = "789abc"
+        network.matchHeader("Authorization", "token 789abc")
+        gh.request("GET", "repos/foo/bar/branches") success done
+        delete process.env.HUBOT_GITHUB_TOKEN
+      it "includes accept header", (done) ->
+        network.matchHeader('Accept', 'application/json')
+        gh.request("GET", "repos/foo/bar/branches") success done
+      it "returns parsed json", (done) ->
+        gh.request("GET", "repos/foo/bar/branches") (data) ->
+          assert.deepEqual response, data
+          done()
 
     describe "get", ->
+      beforeEach ->
+        network = nock("https://api.github.com")
+          .get("/gists")
+          .reply(200, [])
       it "sends request", (done) ->
-        gh.get("repos/foo/bar/branches") success done
+        gh.get("gists") success done
 
     describe "post", ->
       data = description: "A test gist", public: true, files: { "abc.txt": { content: "abcdefg" } }
       response = url: "http://api.github.com/gists/1", id: 1
       beforeEach ->
         network = nock("https://api.github.com")
-          .post("/gists")
+          .post("/gists", data)
           .reply(201, response)
       it "sends request", (done) ->
-        gh.post("/gists") success done
+        gh.post("gists", data) success done
 
   describe "errors", ->
     network = null
