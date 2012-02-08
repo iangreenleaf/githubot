@@ -13,12 +13,12 @@ describe "repo api", ->
         .get("/repos/foo/bar/branches")
         .reply(200, response)
     it "accepts a full repo", (done) ->
-      gh.branches("foo/bar") success done
+      gh.branches "foo/bar", success done
     it "accepts an unqualified repo", (done) ->
       process.env.HUBOT_GITHUB_USER = "foo"
-      gh.branches("bar") success done
+      gh.branches "bar", success done
       delete process.env.HUBOT_GITHUB_USER
     it "returns json", (done) ->
-      gh.branches("foo/bar") (data) ->
+      gh.branches "foo/bar", (data) ->
         assert.deepEqual response, data
         done()

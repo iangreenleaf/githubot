@@ -14,21 +14,21 @@ describe "github api", ->
           .get("/repos/foo/bar/branches")
           .reply(200, response)
       it "accepts a full url", (done) ->
-        gh.request("GET", "https://api.github.com/repos/foo/bar/branches") success done
+        gh.request "GET", "https://api.github.com/repos/foo/bar/branches", success done
       it "accepts a path", (done) ->
-        gh.request("GET", "repos/foo/bar/branches") success done
+        gh.request "GET", "repos/foo/bar/branches", success done
       it "accepts a path (leading slash)", (done) ->
-        gh.request("GET", "repos/foo/bar/branches") success done
+        gh.request "GET", "repos/foo/bar/branches", success done
       it "includes oauth token if exists", (done) ->
         process.env.HUBOT_GITHUB_TOKEN = "789abc"
         network.matchHeader("Authorization", "token 789abc")
-        gh.request("GET", "repos/foo/bar/branches") success done
+        gh.request "GET", "repos/foo/bar/branches", success done
         delete process.env.HUBOT_GITHUB_TOKEN
       it "includes accept header", (done) ->
         network.matchHeader('Accept', 'application/json')
-        gh.request("GET", "repos/foo/bar/branches") success done
+        gh.request "GET", "repos/foo/bar/branches", success done
       it "returns parsed json", (done) ->
-        gh.request("GET", "repos/foo/bar/branches") (data) ->
+        gh.request "GET", "repos/foo/bar/branches", (data) ->
           assert.deepEqual response, data
           done()
 
@@ -38,7 +38,7 @@ describe "github api", ->
           .get("/gists")
           .reply(200, [])
       it "sends request", (done) ->
-        gh.get("gists") success done
+        gh.get "gists", success done
 
       describe "with params", ->
         beforeEach ->
@@ -46,9 +46,9 @@ describe "github api", ->
             .get("/users/foo/repos?foo=bar")
             .reply(200, [])
         it "accepts query params in url", (done) ->
-          gh.get("https://api.github.com/users/foo/repos?foo=bar") success done
+          gh.get "https://api.github.com/users/foo/repos?foo=bar", success done
         it "accepts query params as hash", (done) ->
-          gh.get("users/foo/repos", foo: "bar") success done
+          gh.get "users/foo/repos", {foo: "bar"}, success done
 
     describe "post", ->
       data = description: "A test gist", public: true, files: { "abc.txt": { content: "abcdefg" } }
@@ -58,7 +58,7 @@ describe "github api", ->
           .post("/gists", data)
           .reply(201, response)
       it "sends request", (done) ->
-        gh.post("gists", data) success done
+        gh.post "gists", data, success done
 
   describe "errors", ->
     network = null
@@ -66,7 +66,7 @@ describe "github api", ->
       network = nock("https://api.github.com").get("/foo")
     it "complains about bad response", (done) ->
       network.reply(401, message: "Bad credentials")
-      gh.get("/foo") ->
+      gh.get "/foo", ->
         assert.ok /bad credentials/i.exec mock_robot.logs.error.pop()
         done()
     it "complains about client errors", (done) ->
@@ -78,7 +78,7 @@ describe "github api", ->
       http = require "scoped-http-client"
       http._old_create = http.create
       http.create = -> mock
-      gh.get("/foo") ->
+      gh.get "/foo", ->
         assert.ok /kablooie/i.exec mock_robot.logs.error.pop()
         done()
       http.create = http._old_create
