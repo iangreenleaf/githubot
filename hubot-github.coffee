@@ -1,4 +1,5 @@
 http = require "scoped-http-client"
+querystring = require "querystring"
 
 module.exports = github = (robot) -> {
   qualified_repo: (repo) ->
@@ -24,8 +25,10 @@ module.exports = github = (robot) -> {
         else
           data = JSON.parse body
         cb data
-  get: (url) ->
-    @request "GET", url
+  get: (url, data=null) ->
+    if data?
+      url += "?" + querystring.stringify data
+    @request "GET", url, data
   post: (url, data) ->
     @request "POST", url, data
   branches: (repo) ->

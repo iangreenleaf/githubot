@@ -40,6 +40,16 @@ describe "github api", ->
       it "sends request", (done) ->
         gh.get("gists") success done
 
+      describe "with params", ->
+        beforeEach ->
+          network = nock("https://api.github.com")
+            .get("/users/foo/repos?foo=bar")
+            .reply(200, [])
+        it "accepts query params in url", (done) ->
+          gh.get("https://api.github.com/users/foo/repos?foo=bar") success done
+        it "accepts query params as hash", (done) ->
+          gh.get("users/foo/repos", foo: "bar") success done
+
     describe "post", ->
       data = description: "A test gist", public: true, files: { "abc.txt": { content: "abcdefg" } }
       response = url: "http://api.github.com/gists/1", id: 1
