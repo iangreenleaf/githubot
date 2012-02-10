@@ -16,7 +16,7 @@
     "node": "~0.6.3"
   },
   "dependencies": {
-    "scoped-http-client": "0.9.6"
+    "scoped-http-client": "~> 0.9.6"
   },
   "devDependencies": {
     "mocha": "~> 0.10.2"
