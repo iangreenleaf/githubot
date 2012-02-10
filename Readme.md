@@ -6,7 +6,7 @@
 
 ## Require ##
 
-Use it with Hubot:
+Use it in your Hubot script:
 
 ```coffeescript
 module.exports = (robot) ->
@@ -21,9 +21,7 @@ github = require('githubot')
 
 ## Use ##
 
-## General-purpose ##
-
-Make any call to the API, get the parsed JSON response:
+Make any call to the Github v3 API, get the parsed JSON response:
 
 ```coffeescript
 github.get "https://api.github.com/users/iangreenleaf/gists", (gists) ->
@@ -52,7 +50,7 @@ gh.branches "foo/bar", (branches) ->
 
 ## Helpful Hubot ##
 
-Hubot will report errors, so that you know what happened.
+Hubot will log errors if a request fails.
 
 If `process.env.HUBOT_GITHUB_USER` is present, we can help you guess a repo's full name:
 
