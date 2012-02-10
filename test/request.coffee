@@ -82,3 +82,18 @@ describe "github api", ->
         assert.ok /kablooie/i.exec mock_robot.logs.error.pop()
         done()
       http.create = http._old_create
+
+    describe "without robot given", ->
+      before ->
+        gh = require("..")
+      it "complains to stderr", (done) ->
+        process.done = done
+        process.stderr._old_write = process.stderr.write
+        process.stderr.write = (msg) ->
+          if msg.match /bad credentials/i
+            done()
+          else
+            @_old_write.call process.stderr, msg
+        network.reply(401, message: "Bad credentials")
+        gh.get "/foo", ->
+          process.stderr.write = process.stderr._old_write
