@@ -87,13 +87,13 @@ describe "github api", ->
       before ->
         gh = require("..")
       it "complains to stderr", (done) ->
-        process.done = done
-        process.stderr._old_write = process.stderr.write
-        process.stderr.write = (msg) ->
+        util = require "util"
+        util._old_error = util.error
+        util.error = (msg) ->
           if msg.match /bad credentials/i
             done()
           else
-            @_old_write.call process.stderr, msg
+            @_old_error.call process.stderr, msg
         network.reply(401, message: "Bad credentials")
         gh.get "/foo", ->
-          process.stderr.write = process.stderr._old_write
+          util.error = util._old_error
