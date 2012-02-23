@@ -8,4 +8,8 @@ mock_robot = {
   }
 }
 gh = require("..") mock_robot
-module.exports = [ gh, require("assert"), require("nock"), mock_robot ]
+nock = require("nock")
+module.exports = [ gh, require("assert"), nock, mock_robot ]
+
+beforeEach ->
+  nock.cleanAll()
