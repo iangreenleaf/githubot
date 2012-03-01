@@ -3,6 +3,7 @@ mock_robot = {
   logger: {
     error: (msg) ->
       mock_robot.logs.error.push msg
+      mock_robot.onError(msg) if mock_robot.onError?
     debug: (msg) ->
       mock_robot.logs.debug.push msg
   }

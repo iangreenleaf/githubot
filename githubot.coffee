@@ -26,7 +26,7 @@ class Github
         @logger.error "#{res.statusCode} #{JSON.parse(body).message}"
       else
         data = JSON.parse body
-      cb data
+        cb data
   get: (url, data, cb) ->
     unless cb?
       [cb, data] = [data, null]

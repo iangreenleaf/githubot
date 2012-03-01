@@ -62,13 +62,16 @@ describe "github api", ->
 
   describe "errors", ->
     network = null
+    never_called = ->
+      assert.fail(null, null, "Success callback should not be invoked")
     beforeEach ->
       network = nock("https://api.github.com").get("/foo")
     it "complains about bad response", (done) ->
       network.reply(401, message: "Bad credentials")
-      gh.get "/foo", ->
-        assert.ok /bad credentials/i.exec mock_robot.logs.error.pop()
+      mock_robot.onError = (msg) ->
+        assert.ok /bad credentials/i.exec msg
         done()
+      gh.get "/foo", never_called
     it "complains about client errors", (done) ->
       mock = {
         header: -> mock,
@@ -78,9 +81,10 @@ describe "github api", ->
       http = require "scoped-http-client"
       http._old_create = http.create
       http.create = -> mock
-      gh.get "/foo", ->
-        assert.ok /kablooie/i.exec mock_robot.logs.error.pop()
+      mock_robot.onError = (msg) ->
+        assert.ok /kablooie/i.exec msg
         done()
+      gh.get "/foo", never_called
       http.create = http._old_create
 
     describe "without robot given", ->
@@ -91,9 +95,9 @@ describe "github api", ->
         util._old_error = util.error
         util.error = (msg) ->
           if msg.match /bad credentials/i
+            util.error = util._old_error
             done()
           else
             @_old_error.call process.stderr, msg
         network.reply(401, message: "Bad credentials")
-        gh.get "/foo", ->
-          util.error = util._old_error
+        gh.get "/foo", never_called
