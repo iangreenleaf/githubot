@@ -24,6 +24,22 @@ describe "github api", ->
         network.matchHeader("Authorization", "token 789abc")
         gh.request "GET", "repos/foo/bar/branches", success done
         delete process.env.HUBOT_GITHUB_TOKEN
+      it "uses basic auth if user/pass exists", (done) ->
+        process.env.HUBOT_BOT_GITHUB_USER = "imauser"
+        process.env.HUBOT_BOT_GITHUB_PASSWORD = "mypassword"
+        network.matchHeader("Authorization", "Basic aW1hdXNlcjpteXBhc3N3b3Jk")
+        gh.request "GET", "repos/foo/bar/branches", success done
+        delete process.env.HUBOT_BOT_GITHUB_USER
+        delete process.env.HUBOT_BOT_GITHUB_PASSWORD
+      it "oauth supercedes basic auth", (done) ->
+        process.env.HUBOT_GITHUB_TOKEN = "789abc"
+        process.env.HUBOT_BOT_GITHUB_USER = "imauser"
+        process.env.HUBOT_BOT_GITHUB_PASSWORD = "mypassword"
+        network.matchHeader("Authorization", "token 789abc")
+        gh.request "GET", "repos/foo/bar/branches", success done
+        delete process.env.HUBOT_GITHUB_TOKEN
+        delete process.env.HUBOT_BOT_GITHUB_USER
+        delete process.env.HUBOT_BOT_GITHUB_PASSWORD
       it "includes accept header", (done) ->
         network.matchHeader('Accept', 'application/json')
         gh.request "GET", "repos/foo/bar/branches", success done

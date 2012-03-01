@@ -17,7 +17,11 @@ class Github
       url = "/#{url}" unless url[0] is "/"
       url = "https://api.github.com#{url}"
     req = http.create(url).header("Accept", "application/json")
-    req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
+    if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
+      req = req.header("Authorization", "token #{oauth_token}")
+    else if process.env.HUBOT_BOT_GITHUB_USER? and process.env.HUBOT_BOT_GITHUB_PASSWORD?
+      basic_auth = "#{process.env.HUBOT_BOT_GITHUB_USER}:#{process.env.HUBOT_BOT_GITHUB_PASSWORD}"
+      req = req.header("Authorization", "Basic #{new Buffer(basic_auth).toString('base64')}")
     req[verb.toLowerCase()](JSON.stringify data) (err, res, body) =>
       data = null
       if err?
