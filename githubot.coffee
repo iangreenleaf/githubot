@@ -22,7 +22,7 @@ class Github
       data = null
       if err?
         @logger.error err
-      else if res.statusCode != 200
+      else unless (200 <= res.statusCode < 300)
         @logger.error "#{res.statusCode} #{JSON.parse(body).message}"
       else
         data = JSON.parse body
