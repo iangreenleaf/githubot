@@ -4,6 +4,10 @@ querystring = require "querystring"
 class Github
   constructor: (@logger) ->
   qualified_repo: (repo) ->
+    unless repo?
+      unless (repo = process.env.HUBOT_GITHUB_REPO)?
+        @logger.error "Default Github repo not specified"
+        return null
     repo = repo.toLowerCase()
     return repo unless repo.indexOf("/") is -1
     unless (user = process.env.HUBOT_GITHUB_USER)?
