@@ -19,6 +19,7 @@ describe "qualified_repo", ->
     process.env.HUBOT_GITHUB_USER = "watson"
     process.env.HUBOT_GITHUB_REPO = "sherlock/bar"
     assert.equal "sherlock/bar", gh.qualified_repo null
+    assert.equal "sherlock/bar", gh.qualified_repo()
     delete process.env.HUBOT_GITHUB_USER
     delete process.env.HUBOT_GITHUB_REPO
   it "complains when no username available", ->
