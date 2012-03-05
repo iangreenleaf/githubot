@@ -1,5 +1,7 @@
 # A Hubot-compatible Github API wrapper for Node.js #
 
+[![Build Status]](http://travis-ci.org/iangreenleaf/githubot)
+
 ## Install ##
 
     npm install githubot
@@ -63,3 +65,5 @@ This will happen with the bespoke methods as well:
 ```coffeescript
 gh.branches "githubot", (branches) ->
 ```
+
+[Build Status]: https://secure.travis-ci.org/iangreenleaf/githubot.png?branch=master
