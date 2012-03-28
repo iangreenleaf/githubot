@@ -20,7 +20,7 @@ class Github
     if url[0..3] isnt "http"
       url = "/#{url}" unless url[0] is "/"
       url = "https://api.github.com#{url}"
-    req = http.create(url).header("Accept", "application/json")
+    req = http.create(url).header("Accept", "application/vnd.github.beta+json")
     req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
     req[verb.toLowerCase()](JSON.stringify data) (err, res, body) =>
       data = null

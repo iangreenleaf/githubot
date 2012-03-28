@@ -25,7 +25,7 @@ describe "github api", ->
         gh.request "GET", "repos/foo/bar/branches", success done
         delete process.env.HUBOT_GITHUB_TOKEN
       it "includes accept header", (done) ->
-        network.matchHeader('Accept', 'application/json')
+        network.matchHeader('Accept', 'application/vnd.github.beta+json')
         gh.request "GET", "repos/foo/bar/branches", success done
       it "returns parsed json", (done) ->
         gh.request "GET", "repos/foo/bar/branches", (data) ->
