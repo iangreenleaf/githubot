@@ -41,6 +41,14 @@ github.post "gists", data, (gist) ->
 
 If `process.env.HUBOT_GITHUB_TOKEN` is present, you're automatically authenticated. Sweet!
 
+### Acquire a token ###
+
+If you don't have a token yet, run this:
+
+    curl -i https://api.github.com/authorizations -d '{"scopes":["repo"]}' -u "yourusername"
+
+Enter your Github password when prompted. When you get a response, look for the "token" value.
+
 ## Bespoke API access ##
 
 Mostly a work in progress, but here's a taste of what I have in mind:
