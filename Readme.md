@@ -58,6 +58,16 @@ gh.branches "foo/bar", (branches) ->
   console.log branches[0].name
 ```
 
+```coffeescript
+gh.branches( "foo/bar" ).create "my_radical_feature", (branch) ->
+  console.log branch.object.url
+```
+
+```coffeescript
+gh.branches( "foo/bar" ).delete "my_radical_feature", ->
+  console.log "Deleted my branch!"
+```
+
 ## Helpful Hubot ##
 
 Hubot will log errors if a request fails.
