@@ -30,13 +30,33 @@ describe "repo api", ->
         @response = { object: { type: "commit", sha: "hijklmn", url: "xxx" }, url: "yyy", "ref": "refs/heads/#{@branchName}" }
         network = nock("https://api.github.com")
           .get("/repos/foo/bar/git/refs/heads/master")
-          .reply(200, { object: { type: "commit", sha: @masterSha, url: "xxx" }, url: "yyy", "ref": "refs/heads/master" } )
+          .reply(200, { object: { type: "commit", sha: @masterSha, url: "zzz" }, url: "zzz", "ref": "refs/heads/master" } )
           .post("/repos/foo/bar/git/refs", {ref: "refs/heads/#{@branchName}", sha: @masterSha } )
           .reply(200, @response )
       it "returns json", (done) ->
         gh.branches( "foo/bar" ).create @branchName, (data) =>
           assert.deepEqual data,
             name: @branchName, commit: {sha: "hijklmn", url: "xxx"}
+          network.done()
+          done()
+
+    describe "create from another branch", ->
+      beforeEach ->
+        @toBranch = "newbranch"
+        @fromBranch = "oldbranch"
+        @branchSha = "bbbbcccc"
+        network = nock("https://api.github.com")
+          .get("/repos/foo/bar/git/refs/heads/#{@fromBranch}")
+          .reply(200, { object: { type: "commit", sha: @branchSha, url: "zzz" }, url: "zzz", "ref": "refs/heads/#{@fromBranch}" } )
+          .post("/repos/foo/bar/git/refs", {ref: "refs/heads/#{@toBranch}", sha: @branchSha } )
+          .reply(
+            200,
+            { object: { type: "commit", sha: "dddd", url: "aaa" }, url: "bbb", "ref": "refs/heads/#{@toBranch}" }
+          )
+      it "returns json", (done) ->
+        gh.branches( "foo/bar" ).create @toBranch, from: @fromBranch, (data) =>
+          assert.deepEqual data,
+            name: @toBranch, commit: {sha: "dddd", url: "aaa"}
           network.done()
           done()
 

@@ -43,8 +43,10 @@ class Github
     if cb?
       @get("https://api.github.com/repos/#{@qualified_repo repo}/branches", cb)
     else
-      create: (branchName, cb) =>
-        @get "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/master", (json) =>
+      create: (branchName, opts, cb) =>
+        [opts,cb] = [{},opts] unless cb?
+        opts.from ?= "master"
+        @get "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{opts.from}", (json) =>
           sha = json.object.sha
           @post "https://api.github.com/repos/#{@qualified_repo repo}/git/refs",
             ref: "refs/heads/#{branchName}", sha: sha

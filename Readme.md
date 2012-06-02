@@ -59,7 +59,12 @@ gh.branches "foo/bar", (branches) ->
 ```
 
 ```coffeescript
+# Branch from master
 gh.branches( "foo/bar" ).create "my_radical_feature", (branch) ->
+  console.log branch.sha
+
+# Branch from another branch
+gh.branches( "foo/bar" ).create "even_more_radical", from: "my_radical_feature", (branch) ->
   console.log branch.sha
 ```
 
