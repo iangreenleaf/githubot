@@ -49,6 +49,8 @@ class Github
           @post "https://api.github.com/repos/#{@qualified_repo repo}/git/refs",
             ref: "refs/heads/#{branchName}", sha: sha
             , cb
+      delete: (branchName, cb) =>
+        @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", (json) -> cb()
 
 module.exports = github = (robot) ->
   new Github robot.logger
