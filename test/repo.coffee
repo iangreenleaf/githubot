@@ -45,7 +45,7 @@ describe "repo api", ->
         @response = { object: { type: "commit", sha: "hijklmn", url: "xxx" }, url: "yyy", "ref": "refs/heads/#{@branchName}" }
         network = nock("https://api.github.com")
           .delete("/repos/foo/bar/git/refs/heads/#{@branchName}")
-          .reply(204)
+          .reply(204, {})
       it "returns nothing", (done) ->
         gh.branches( "foo/bar" ).delete @branchName, ->
           network.done()
