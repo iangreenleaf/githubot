@@ -35,7 +35,8 @@ describe "repo api", ->
           .reply(200, @response )
       it "returns json", (done) ->
         gh.branches( "foo/bar" ).create @branchName, (data) =>
-          assert.deepEqual @response, data
+          assert.deepEqual data,
+            name: @branchName, commit: {sha: "hijklmn", url: "xxx"}
           network.done()
           done()
 

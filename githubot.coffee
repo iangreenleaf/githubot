@@ -48,7 +48,8 @@ class Github
           sha = json.object.sha
           @post "https://api.github.com/repos/#{@qualified_repo repo}/git/refs",
             ref: "refs/heads/#{branchName}", sha: sha
-            , cb
+            , (data) ->
+              cb name: branchName, commit: { sha: data.object.sha, url: data.object.url }
       delete: (branchName, cb) =>
         @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", (json) -> cb()
 
