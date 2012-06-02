@@ -40,7 +40,15 @@ class Github
   post: (url, data, cb) ->
     @request "POST", url, data, cb
   branches: (repo, cb) ->
-    @get("https://api.github.com/repos/#{@qualified_repo repo}/branches", cb)
+    if cb?
+      @get("https://api.github.com/repos/#{@qualified_repo repo}/branches", cb)
+    else
+      create: (branchName, cb) =>
+        @get "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/master", (json) =>
+          sha = json.object.sha
+          @post "https://api.github.com/repos/#{@qualified_repo repo}/git/refs",
+            ref: "refs/heads/#{branchName}", sha: sha
+            , cb
 
 module.exports = github = (robot) ->
   new Github robot.logger
