@@ -60,7 +60,7 @@ gh.branches "foo/bar", (branches) ->
 
 ```coffeescript
 gh.branches( "foo/bar" ).create "my_radical_feature", (branch) ->
-  console.log branch.object.url
+  console.log branch.sha
 ```
 
 ```coffeescript
