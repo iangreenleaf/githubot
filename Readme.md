@@ -37,6 +37,8 @@ github.post "gists", data, (gist) ->
   console.log gist.url
 ```
 
+If `process.env.HUBOT_GITHUB_URL` exists, it will override the default API URL. This is useful for Enterprise Github installations
+
 ## Authentication ##
 
 If `process.env.HUBOT_GITHUB_TOKEN` is present, you're automatically authenticated. Sweet!
