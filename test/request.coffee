@@ -31,13 +31,17 @@ describe "github api", ->
         gh.request "GET", "repos/foo/bar/branches", (data) ->
           assert.deepEqual response, data
           done()
-      it "uses different base URL if option given", (done) ->
-        process.env.HUBOT_GITHUB_API = "http://mygithub.internal"
-        network = nock("http://mygithub.internal")
-          .get("/repos/foo/bar/branches")
-          .reply(200, response)
-        gh.request "GET", "repos/foo/bar/branches", success done
-        delete process.env.HUBOT_GITHUB_API
+      context "custom base URL", ->
+        beforeEach ->
+          network = nock("http://mygithub.internal")
+            .get("/repos/foo/bar/branches")
+            .reply(200, response)
+        it "is used if option exists", (done) ->
+          process.env.HUBOT_GITHUB_API = "http://mygithub.internal"
+          gh.request "GET", "repos/foo/bar/branches", success done
+          delete process.env.HUBOT_GITHUB_API
+        it "is used if passed explicitly", (done) ->
+          gh.request "GET", "http://mygithub.internal/repos/foo/bar/branches", success done
 
     describe "get", ->
       beforeEach ->
