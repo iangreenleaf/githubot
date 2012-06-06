@@ -37,8 +37,6 @@ github.post "gists", data, (gist) ->
   console.log gist.url
 ```
 
-If `process.env.HUBOT_GITHUB_URL` exists, it will override the default API URL. This is useful for Enterprise Github installations
-
 ## Authentication ##
 
 If `process.env.HUBOT_GITHUB_TOKEN` is present, you're automatically authenticated. Sweet!
@@ -75,5 +73,13 @@ This will happen with the bespoke methods as well:
 ```coffeescript
 gh.branches "githubot", (branches) ->
 ```
+
+If `process.env.HUBOT_GITHUB_API` exists, it will override the default API URL. This is useful for Enterprise Github installations.
+
+    HUBOT_GITHUB_API='http://myprivate.github.int'
+
+
+
+
 
 [Build Status]: https://secure.travis-ci.org/iangreenleaf/githubot.png?branch=master
