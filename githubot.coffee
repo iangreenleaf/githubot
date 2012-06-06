@@ -18,7 +18,7 @@ class Github
     unless cb?
       [cb, data] = [data, null]
 
-    unless (url_api_base = process.env.HUBOT_GITHUB_URL)?
+    unless (url_api_base = process.env.HUBOT_GITHUB_API)?
       url_api_base = "https://api.github.com"
 
     if url[0..3] isnt "http"

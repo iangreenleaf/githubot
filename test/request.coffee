@@ -32,12 +32,12 @@ describe "github api", ->
           assert.deepEqual response, data
           done()
       it "uses different base URL if option given", (done) ->
-        process.env.HUBOT_GITHUB_URL = "http://mygithub.internal"
+        process.env.HUBOT_GITHUB_API = "http://mygithub.internal"
         network = nock("http://mygithub.internal")
           .get("/repos/foo/bar/branches")
           .reply(200, response)
         gh.request "GET", "repos/foo/bar/branches", success done
-        delete process.env.HUBOT_GITHUB_URL
+        delete process.env.HUBOT_GITHUB_API
 
     describe "get", ->
       beforeEach ->
