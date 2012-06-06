@@ -78,6 +78,7 @@ If `process.env.HUBOT_GITHUB_API` exists, it will override the default API URL. 
 
     HUBOT_GITHUB_API='http://myprivate.github.int'
 
+## [Contributors](https://github.com/iangreenleaf/githubot/contributors) ##
 
 
 
