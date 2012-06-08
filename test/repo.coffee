@@ -93,3 +93,9 @@ describe "repo api", ->
         gh.branches( "foo/bar" ).delete @branchName, ->
           network.done()
           done()
+      it "accepts multiple branch names", (done) ->
+        network.delete("/repos/foo/bar/git/refs/heads/anotherBranch")
+          .reply(204, {})
+        gh.branches( "foo/bar" ).delete @branchName, "anotherBranch", ->
+          network.done()
+          done()

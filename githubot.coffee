@@ -52,8 +52,11 @@ class Github
             ref: "refs/heads/#{branchName}", sha: sha
             , (data) ->
               cb name: branchName, commit: { sha: data.object.sha, url: data.object.url }
-      delete: (branchName, cb) =>
-        @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", (json) -> cb()
+      delete: (branchNames..., cb) =>
+        left = branchNames.length
+        for branchName in branchNames
+          @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", (json) ->
+            cb() if --left is 0
 
 module.exports = github = (robot) ->
   new Github robot.logger
