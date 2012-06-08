@@ -84,7 +84,7 @@ describe "repo api", ->
 
     describe "delete", ->
       beforeEach ->
-        @branchName = "newbranch"
+        @branchName = "badbranch"
         @response = { object: { type: "commit", sha: "hijklmn", url: "xxx" }, url: "yyy", "ref": "refs/heads/#{@branchName}" }
         network = nock("https://api.github.com")
           .delete("/repos/foo/bar/git/refs/heads/#{@branchName}")
