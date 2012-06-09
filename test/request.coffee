@@ -60,6 +60,19 @@ describe "github api", ->
       it "sends request", (done) ->
         gh.post "gists", data, success done
 
+    describe "delete", ->
+      it "sends request", (done) ->
+        network = nock("https://api.github.com")
+          .delete("/gists/345")
+          .reply(204, {}) #TODO send no response, not empty hash
+        gh.request "DELETE", "gists/345", success done
+      it "includes empty body", (done) ->
+        network = nock("https://api.github.com")
+          .delete("/gists/345", "")
+          .matchHeader("Content-Length", 0)
+          .reply(204, {}) #TODO send no response, not empty hash
+        gh.request "DELETE", "gists/345", success done
+
   describe "errors", ->
     network = null
     never_called = ->

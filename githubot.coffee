@@ -22,7 +22,10 @@ class Github
       url = "https://api.github.com#{url}"
     req = http.create(url).header("Accept", "application/vnd.github.beta+json")
     req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
-    req[verb.toLowerCase()](JSON.stringify data) (err, res, body) =>
+    args = []
+    args.push JSON.stringify data if data?
+    args.push "" if verb is "DELETE" and not data?
+    req[verb.toLowerCase()](args...) (err, res, body) =>
       data = null
       if err?
         @logger.error err
