@@ -26,13 +26,12 @@ class Github
     args.push JSON.stringify data if data?
     args.push "" if verb is "DELETE" and not data?
     req[verb.toLowerCase()](args...) (err, res, body) =>
-      data = null
+      data = JSON.parse body if body
       if err?
         @logger.error err
       else unless (200 <= res.statusCode < 300)
-        @logger.error "#{res.statusCode} #{JSON.parse(body).message}"
+        @logger.error "#{res.statusCode} #{data.message}"
       else
-        data = JSON.parse body
         cb data
   get: (url, data, cb) ->
     unless cb?

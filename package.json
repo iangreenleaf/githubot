@@ -21,6 +21,6 @@
   "devDependencies": {
     "mocha": "~> 0.10.2"
     , "coffee-script": "~> 1.1.3"
-    , "nock": "0.10.5"
+    , "nock": "https://github.com/amco/nock/tarball/empty_response"
   }
 }
