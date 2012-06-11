@@ -16,11 +16,11 @@
     "node": ">=0.4.7 <0.7.0"
   },
   "dependencies": {
-    "scoped-http-client": "~> 0.9.6"
+    "scoped-http-client": "https://github.com/iangreenleaf/node-scoped-http-client/tarball/content_length"
   },
   "devDependencies": {
     "mocha": "~1.1"
     , "coffee-script": "~1.1.3"
-    , "nock": "~0.13"
+    , "nock": "~0.13.3"
   }
 }

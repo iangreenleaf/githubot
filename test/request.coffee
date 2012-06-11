@@ -71,16 +71,35 @@ describe "github api", ->
       it "sends request", (done) ->
         gh.post "gists", data, success done
 
+    describe "delete", ->
+      it "sends request", (done) ->
+        network = nock("https://api.github.com")
+          .delete("/gists/345")
+          .reply(204)
+        gh.request "DELETE", "gists/345", success done
+      it "includes empty body", (done) ->
+        network = nock("https://api.github.com")
+          .delete("/gists/345", "")
+          .matchHeader("Content-Length", 0)
+          .reply(204)
+        gh.request "DELETE", "gists/345", success done
+
   describe "errors", ->
     network = null
     never_called = ->
       assert.fail(null, null, "Success callback should not be invoked")
     beforeEach ->
       network = nock("https://api.github.com").get("/foo")
-    it "complains about bad response", (done) ->
+    it "complains about failed response", (done) ->
       network.reply(401, message: "Bad credentials")
       mock_robot.onError = (msg) ->
         assert.ok /bad credentials/i.exec msg
+        done()
+      gh.get "/foo", never_called
+    it "complains about bad response", (done) ->
+      network.reply(500, "WTF$$%@! SERVER VOMIT")
+      mock_robot.onError = (msg) ->
+        assert.ok /vomit/i.exec msg
         done()
       gh.get "/foo", never_called
     it "complains about client errors", (done) ->

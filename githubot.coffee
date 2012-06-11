@@ -25,15 +25,20 @@ class Github
       url = "#{url_api_base}#{url}"
     req = http.create(url).header("Accept", "application/vnd.github.beta+json")
     req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
-    req[verb.toLowerCase()](JSON.stringify data) (err, res, body) =>
-      data = null
-      if err?
-        @logger.error err
-      else unless (200 <= res.statusCode < 300)
-        @logger.error "#{res.statusCode} #{JSON.parse(body).message}"
-      else
-        data = JSON.parse body
-        cb data
+    args = []
+    args.push JSON.stringify data if data?
+    args.push "" if verb is "DELETE" and not data?
+    req[verb.toLowerCase()](args...) (err, res, body) =>
+      return @logger.error err if err?
+
+      try
+        data = JSON.parse body if body
+        if (200 <= res.statusCode < 300)
+          cb data
+        else
+          @logger.error "#{res.statusCode} #{data.message}"
+      catch e
+        @logger.error "Could not parse response: #{body}"
   get: (url, data, cb) ->
     unless cb?
       [cb, data] = [data, null]
@@ -43,7 +48,23 @@ class Github
   post: (url, data, cb) ->
     @request "POST", url, data, cb
   branches: (repo, cb) ->
-    @get("https://api.github.com/repos/#{@qualified_repo repo}/branches", cb)
+    if cb?
+      @get("https://api.github.com/repos/#{@qualified_repo repo}/branches", cb)
+    else
+      create: (branchName, opts, cb) =>
+        [opts,cb] = [{},opts] unless cb?
+        opts.from ?= "master"
+        @get "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{opts.from}", (json) =>
+          sha = json.object.sha
+          @post "https://api.github.com/repos/#{@qualified_repo repo}/git/refs",
+            ref: "refs/heads/#{branchName}", sha: sha
+            , (data) ->
+              cb name: branchName, commit: { sha: data.object.sha, url: data.object.url }
+      delete: (branchNames..., cb) =>
+        left = branchNames.length
+        for branchName in branchNames
+          @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", (json) ->
+            cb() if --left is 0
 
 module.exports = github = (robot) ->
   new Github robot.logger
