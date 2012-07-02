@@ -33,12 +33,13 @@ class Github
 
       try
         data = JSON.parse body if body
-        if (200 <= res.statusCode < 300)
-          cb data
-        else
-          @logger.error "#{res.statusCode} #{data.message}"
       catch e
-        @logger.error "Could not parse response: #{body}"
+        return @logger.error "Could not parse response: #{body}"
+
+      if (200 <= res.statusCode < 300)
+        cb data
+      else
+        @logger.error "#{res.statusCode} #{data.message}"
   get: (url, data, cb) ->
     unless cb?
       [cb, data] = [data, null]
