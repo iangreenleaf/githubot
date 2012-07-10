@@ -1,4 +1,5 @@
 http = require "scoped-http-client"
+async = require "async"
 querystring = require "querystring"
 
 class Github
@@ -62,10 +63,13 @@ class Github
             , (data) ->
               cb name: branchName, commit: { sha: data.object.sha, url: data.object.url }
       delete: (branchNames..., cb) =>
-        left = branchNames.length
+        queue = async.queue (task, cb) =>
+          @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{task.branch}", cb
+        , 20
         for branchName in branchNames
-          @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", (json) ->
-            cb() if --left is 0
+          do (branchName) ->
+            queue.push branch: branchName, (err) ->
+        queue.drain = cb
 
 module.exports = github = (robot) ->
   new Github robot.logger
