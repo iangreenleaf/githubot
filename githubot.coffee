@@ -4,6 +4,9 @@ querystring = require "querystring"
 
 class Github
   constructor: (@logger) ->
+    @requestQueue = async.queue (task, cb) =>
+      task.run cb
+    , 20
   qualified_repo: (repo) ->
     unless repo?
       unless (repo = process.env.HUBOT_GITHUB_REPO)?
@@ -29,7 +32,8 @@ class Github
     args = []
     args.push JSON.stringify data if data?
     args.push "" if verb is "DELETE" and not data?
-    req[verb.toLowerCase()](args...) (err, res, body) =>
+    task = run: (cb) -> req[verb.toLowerCase()](args...) cb
+    @requestQueue.push task, (err, res, body) =>
       return @logger.error err if err?
 
       try
@@ -82,3 +86,7 @@ github.logger = {
     util.error "ERROR: #{msg}"
   debug: ->
 }
+
+github.requestQueue = async.queue (task, cb) =>
+  task.run cb
+, 20
