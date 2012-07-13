@@ -69,13 +69,12 @@ class Github
             , (data) ->
               cb name: branchName, commit: { sha: data.object.sha, url: data.object.url }
       delete: (branchNames..., cb) =>
-        queue = async.queue (task, cb) =>
-          @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{task.branch}", cb
-        , 20
+        actions = []
         for branchName in branchNames
-          do (branchName) ->
-            queue.push branch: branchName, (err) ->
-        queue.drain = cb
+          do (branchName) =>
+            actions.push (done) =>
+              @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", done
+        async.parallel actions, cb
 
 module.exports = github = (robot, opts) ->
   new Github robot.logger, opts
