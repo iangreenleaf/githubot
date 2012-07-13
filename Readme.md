@@ -12,7 +12,7 @@ Use it in your Hubot script:
 
 ```coffeescript
 module.exports = (robot) ->
-  github = require('githubot')(robot)
+  github = require('githubot')(robot, opts)
 ```
 
 Or use it on its own:
@@ -20,6 +20,10 @@ Or use it on its own:
 ```coffeescript
 github = require('githubot')
 ```
+
+### Options ###
+
+ * `concurrent_requests`: How many concurrent requests to GitHub may be made at once. Defaults to 20.
 
 ## Use ##
 
