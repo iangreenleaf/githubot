@@ -2,11 +2,13 @@ http = require "scoped-http-client"
 async = require "async"
 querystring = require "querystring"
 
+CONCURRENT_REQUESTS = 20
+
 class Github
-  constructor: (@logger) ->
+  constructor: (@logger, opts={}) ->
     @requestQueue = async.queue (task, cb) =>
       task.run cb
-    , 20
+    , (opts.concurrent_requests || CONCURRENT_REQUESTS)
   qualified_repo: (repo) ->
     unless repo?
       unless (repo = process.env.HUBOT_GITHUB_REPO)?
@@ -75,8 +77,8 @@ class Github
             queue.push branch: branchName, (err) ->
         queue.drain = cb
 
-module.exports = github = (robot) ->
-  new Github robot.logger
+module.exports = github = (robot, opts) ->
+  new Github robot.logger, opts
 
 github[method] = func for method,func of Github.prototype
 
@@ -89,4 +91,4 @@ github.logger = {
 
 github.requestQueue = async.queue (task, cb) =>
   task.run cb
-, 20
+, CONCURRENT_REQUESTS
