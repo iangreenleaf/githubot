@@ -93,6 +93,8 @@ If `process.env.HUBOT_GITHUB_API` exists, it will override the default API URL. 
 
     HUBOT_GITHUB_API='http://myprivate.github.int'
 
+`process.env.HUBOT_CONCURRENT_REQUESTS` limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
+
 ## [Contributors](https://github.com/iangreenleaf/githubot/contributors) ##
 
 
