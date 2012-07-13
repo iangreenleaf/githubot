@@ -12,7 +12,7 @@ Use it in your Hubot script:
 
 ```coffeescript
 module.exports = (robot) ->
-  github = require('githubot')(robot, opts)
+  github = require('githubot')(robot)
 ```
 
 Or use it on its own:
@@ -20,10 +20,6 @@ Or use it on its own:
 ```coffeescript
 github = require('githubot')
 ```
-
-### Options ###
-
- * `concurrent_requests`: How many concurrent requests to GitHub may be made at once. Defaults to 20.
 
 ## Use ##
 
@@ -96,6 +92,8 @@ gh.branches "githubot", (branches) ->
 If `process.env.HUBOT_GITHUB_API` exists, it will override the default API URL. This is useful for Enterprise Github installations.
 
     HUBOT_GITHUB_API='http://myprivate.github.int'
+
+`process.env.HUBOT_CONCURRENT_REQUESTS` limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
 
 ## [Contributors](https://github.com/iangreenleaf/githubot/contributors) ##
 

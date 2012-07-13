@@ -2,13 +2,13 @@ http = require "scoped-http-client"
 async = require "async"
 querystring = require "querystring"
 
-CONCURRENT_REQUESTS = 20
+process.env.HUBOT_CONCURRENT_REQUESTS ?= 20
 
 class Github
-  constructor: (@logger, opts={}) ->
+  constructor: (@logger) ->
     @requestQueue = async.queue (task, cb) =>
       task.run cb
-    , (opts.concurrent_requests || CONCURRENT_REQUESTS)
+    , process.env.HUBOT_CONCURRENT_REQUESTS
   qualified_repo: (repo) ->
     unless repo?
       unless (repo = process.env.HUBOT_GITHUB_REPO)?
@@ -76,8 +76,8 @@ class Github
               @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", done
         async.parallel actions, cb
 
-module.exports = github = (robot, opts) ->
-  new Github robot.logger, opts
+module.exports = github = (robot) ->
+  new Github robot.logger
 
 github[method] = func for method,func of Github.prototype
 
@@ -90,4 +90,4 @@ github.logger = {
 
 github.requestQueue = async.queue (task, cb) =>
   task.run cb
-, CONCURRENT_REQUESTS
+, process.env.HUBOT_CONCURRENT_REQUESTS
