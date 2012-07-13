@@ -89,11 +89,17 @@ This will happen with the bespoke methods as well:
 gh.branches "githubot", (branches) ->
 ```
 
-If `process.env.HUBOT_GITHUB_API` exists, it will override the default API URL. This is useful for Enterprise Github installations.
+### Options ###
 
-    HUBOT_GITHUB_API='http://myprivate.github.int'
+* `HUBOT_GITHUB_TOKEN`: GitHub API token. Required to perform authenticated actions.
 
-`process.env.HUBOT_CONCURRENT_REQUESTS` limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
+* `HUBOT_GITHUB_USER`: Default GitHub username to use if one is not given.
+
+* `HUBOT_GITHUB_API`: The base API URL. This is useful for Enterprise Github installations.
+
+  For example, `HUBOT_GITHUB_API='http://myprivate.github.int'`
+
+* `HUBOT_CONCURRENT_REQUESTS`: Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
 
 ## [Contributors](https://github.com/iangreenleaf/githubot/contributors) ##
 
