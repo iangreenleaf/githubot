@@ -1,8 +1,9 @@
-# For some reason nock doesn't play nice with localhost in node 0.4, so
-# avoid test_helper.coffee altogether here.
-mock_robot = logger: { error: (->), debug: (->) }, clean: (->)
-assert = require "assert"
+[ gh, assert, nock, mock_robot ] = require "./test_helper"
 http = require "http"
+
+# nock screws up the parsed URL options in node 0.4, and I can't be bothered
+# to deal with the problem.
+return if process.versions.node < "0.5.0"
 
 describe "concurrent requests", ->
   it "are limited", (done) ->
