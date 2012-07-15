@@ -1,4 +1,4 @@
-[ gh, assert, nock, mock_robot ] = require "./test_helper"
+[ gh, assert, nock, mock_robot ] = require "../test_helper"
 http = require "http"
 
 # nock screws up the parsed URL options in node 0.4, and I can't be bothered
@@ -24,7 +24,7 @@ describe "concurrent requests", ->
 
     process.env.HUBOT_GITHUB_API = "http://localhost:#{port}"
     process.env.HUBOT_CONCURRENT_REQUESTS = 35
-    gh = require("..") mock_robot
+    gh = require("../..") mock_robot
     for i in [1..remain]
       gh.request "GET", "/repos/foo/bar/branches/#{i}", ->
         if --remain is 0
