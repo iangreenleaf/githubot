@@ -1,4 +1,7 @@
-[ gh, assert, nock, mock_robot ] = require "./test_helper"
+# For some reason nock doesn't play nice with localhost in node 0.4, so
+# avoid test_helper.coffee altogether here.
+mock_robot = logger: { error: (->), debug: (->) }, clean: (->)
+assert = require "assert"
 http = require "http"
 
 describe "concurrent requests", ->
