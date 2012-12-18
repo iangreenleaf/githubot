@@ -63,7 +63,7 @@ class Github
       msg,  cb)
   branches: (repo, cb) ->
     if cb?
-      @get("https://api.github.com/repos/#{@qualified_repo repo}/merges", cb)
+      @get("https://api.github.com/repos/#{@qualified_repo repo}/branches", cb)
     else
       create: (branchName, opts, cb) =>
         [opts,cb] = [{},opts] unless cb?
