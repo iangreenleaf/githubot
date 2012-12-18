@@ -55,9 +55,15 @@ class Github
     @request "GET", url, cb
   post: (url, data, cb) ->
     @request "POST", url, data, cb
+  merge: (repo, base, head, cb) ->
+    msg=
+      base: base
+      head: head
+    @post("https://api.github.com/repos/#{@qualified_repo repo}/merges", 
+      msg,  cb)
   branches: (repo, cb) ->
     if cb?
-      @get("https://api.github.com/repos/#{@qualified_repo repo}/branches", cb)
+      @get("https://api.github.com/repos/#{@qualified_repo repo}/merges", cb)
     else
       create: (branchName, opts, cb) =>
         [opts,cb] = [{},opts] unless cb?
