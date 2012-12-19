@@ -101,7 +101,25 @@ gh.branches "githubot", (branches) ->
 
 * `HUBOT_CONCURRENT_REQUESTS`: Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
 
-## [Contributors](https://github.com/iangreenleaf/githubot/contributors) ##
+## Contributing ##
+
+Install the dependencies:
+
+    npm install
+
+Run the tests:
+
+    make test
+    make test-all # Runs additional slower "integration" style tests, generally not necessary
+
+**Pull requests encouraged!**
+
+I'm vastly more likely to merge code that comes with tests. If you're confused by the testing process,
+ask and I can probably point you in the right direction.
+
+## Thanks ##
+
+[These lovely people have contributed to githubot](https://github.com/iangreenleaf/githubot/contributors).
 
 
 
