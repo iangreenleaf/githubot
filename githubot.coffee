@@ -2,6 +2,8 @@ http = require "scoped-http-client"
 async = require "async"
 querystring = require "querystring"
 
+version = require("./package.json")["version"]
+
 process.env.HUBOT_CONCURRENT_REQUESTS ?= 20
 
 class Github
@@ -30,6 +32,7 @@ class Github
       url = "/#{url}" unless url[0] is "/"
       url = "#{url_api_base}#{url}"
     req = http.create(url).header("Accept", "application/vnd.github.beta+json")
+    req = req.header("User-Agent", "GitHubot/#{version}")
     req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
     args = []
     args.push JSON.stringify data if data?
