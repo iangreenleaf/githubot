@@ -53,10 +53,14 @@ Enter your Github password when prompted. When you get a response, look for the 
 
 Mostly a work in progress, but here's a taste of what I have in mind:
 
+### List branches ###
+
 ```coffeescript
 gh.branches "foo/bar", (branches) ->
   console.log branches[0].name
 ```
+
+### Create a branch ###
 
 ```coffeescript
 # Branch from master
@@ -67,6 +71,28 @@ gh.branches( "foo/bar" ).create "my_radical_feature", (branch) ->
 gh.branches( "foo/bar" ).create "even_more_radical", from: "my_radical_feature", (branch) ->
   console.log branch.sha
 ```
+
+### Merge a branch ###
+
+```coffeescript
+# Merge a branch into master
+gh.branches( "foo/bar" ).merge "my_radical_feature", (mergeCommit) ->
+  console.log mergeCommit.message
+
+# Merge a branch into a different target
+gh.branches( "foo/bar" ).merge "my_radical_feature", into: "hotfixes", (mergeCommit) ->
+  console.log mergeCommit.message
+
+# `base` is an alias for `into`
+gh.branches( "foo/bar" ).merge "my_radical_feature", base: "hotfixes", (mergeCommit) ->
+  console.log mergeCommit.message
+
+# Provide your own commit message
+gh.branches( "foo/bar" ).merge "my_radical_feature", message: "Merge my radical feature!", (mergeCommit) ->
+  console.log mergeCommit.sha
+```
+
+### Delete a branch ###
 
 ```coffeescript
 gh.branches( "foo/bar" ).delete "my_radical_feature", ->
