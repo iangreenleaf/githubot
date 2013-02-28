@@ -58,12 +58,6 @@ class Github
     @request "GET", url, cb
   post: (url, data, cb) ->
     @request "POST", url, data, cb
-  merge: (repo, base, head, cb) ->
-    msg=
-      base: base
-      head: head
-    @post("https://api.github.com/repos/#{@qualified_repo repo}/merges", 
-      msg,  cb)
   branches: (repo, cb) ->
     if cb?
       @get("https://api.github.com/repos/#{@qualified_repo repo}/branches", cb)
@@ -84,6 +78,15 @@ class Github
             actions.push (done) =>
               @request "DELETE", "https://api.github.com/repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", done
         async.parallel actions, cb
+      merge: (head, opts, cb) =>
+        [opts,cb] = [{},opts] unless cb?
+        body =
+          base: opts.base ? opts.into ? "master"
+          head: head
+        if opts.message?
+          body.commit_message = opts.message
+        @post "https://api.github.com/repos/#{@qualified_repo repo}/merges", body, (data) ->
+          cb sha: data.commit.sha, message: data.commit.commit.message, url: data.commit.url
 
 module.exports = github = (robot) ->
   new Github robot.logger
