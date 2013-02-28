@@ -99,3 +99,58 @@ describe "repo api", ->
         gh.branches( "foo/bar" ).delete @branchName, "anotherBranch", ->
           network.done()
           done()
+
+    describe "merge", ->
+      beforeEach ->
+        @branchName = "newbranch"
+        @sha = "deadbeef"
+
+      it "succeeds", (done) ->
+        network = nock("https://api.github.com")
+          .post("/repos/foo/bar/merges",
+            base: "master", head: @branchName)
+          .reply(
+            201
+            , commit: { sha: @sha, url: "xyz", commit: { message: "commit message" } }
+          )
+        gh.branches("foo/bar").merge @branchName, (commit) =>
+          assert.deepEqual commit,
+            sha: @sha, message: "commit message", url: "xyz"
+          network.done()
+          done()
+
+      context "with base specified", (done) ->
+        beforeEach ->
+          @base = "targetbranch"
+          network = nock("https://api.github.com")
+            .post("/repos/foo/bar/merges",
+              base: @base, head: @branchName)
+            .reply(
+              201
+              , commit: { sha: @sha, url: "xyz", commit: { message: "commit message" } }
+            )
+          @cb = (done) => (commit) =>
+            assert.deepEqual commit,
+              sha: @sha, message: "commit message", url: "xyz"
+            network.done()
+            done()
+
+        it "as 'into'", (done) ->
+          gh.branches("foo/bar").merge @branchName, {into: @base}, @cb(done)
+        it "as 'base'", (done) ->
+          gh.branches("foo/bar").merge @branchName, {base: @base}, @cb(done)
+
+      it "with commit message specified", (done) ->
+        @message = "An awesome merge!"
+        network = nock("https://api.github.com")
+          .post("/repos/foo/bar/merges",
+            base: "master", head: @branchName, commit_message: @message)
+          .reply(
+            201
+            , commit: { sha: @sha, url: "xyz", commit: { message: @message } }
+          )
+        gh.branches("foo/bar").merge @branchName, message: @message, (commit) =>
+          assert.deepEqual commit,
+            sha: @sha, message: @message, url: "xyz"
+          network.done()
+          done()
