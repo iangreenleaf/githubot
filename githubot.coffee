@@ -88,7 +88,7 @@ class Github
         @post "https://api.github.com/repos/#{@qualified_repo repo}/merges", body, (data) =>
           unless data?
             return @logger.error "Nothing to merge"
-          cb sha: data.commit.sha, message: data.commit.commit.message, url: data.commit.url
+          cb sha: data.sha, message: data.commit.message, url: data.url
 
 module.exports = github = (robot) ->
   new Github robot.logger

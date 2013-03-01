@@ -111,7 +111,7 @@ describe "repo api", ->
             base: "master", head: @branchName)
           .reply(
             201
-            , commit: { sha: @sha, url: "xyz", commit: { message: "commit message" } }
+            , sha: @sha, url: "xyz", commit: { message: "commit message" }
           )
         gh.branches("foo/bar").merge @branchName, (commit) =>
           assert.deepEqual commit,
@@ -127,7 +127,7 @@ describe "repo api", ->
               base: @base, head: @branchName)
             .reply(
               201
-              , commit: { sha: @sha, url: "xyz", commit: { message: "commit message" } }
+              , sha: @sha, url: "xyz", commit: { message: "commit message" }
             )
           @cb = (done) => (commit) =>
             assert.deepEqual commit,
@@ -147,7 +147,7 @@ describe "repo api", ->
             base: "master", head: @branchName, commit_message: @message)
           .reply(
             201
-            , commit: { sha: @sha, url: "xyz", commit: { message: @message } }
+            , sha: @sha, url: "xyz", commit: { message: @message }
           )
         gh.branches("foo/bar").merge @branchName, message: @message, (commit) =>
           assert.deepEqual commit,
