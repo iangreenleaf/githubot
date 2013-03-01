@@ -16,7 +16,7 @@
     "node": ">=0.4.7"
   },
   "dependencies": {
-    "scoped-http-client": "https://github.com/iangreenleaf/node-scoped-http-client/tarball/content_length_published",
+    "scoped-http-client": "~0.9.8",
     "async": "~0.1.22"
   },
   "devDependencies": {
