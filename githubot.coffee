@@ -42,14 +42,14 @@ class Github
       return @logger.error err if err?
 
       try
-        data = JSON.parse body if body
+        responseData = JSON.parse body if body
       catch e
         return @logger.error "Could not parse response: #{body}"
 
       if (200 <= res.statusCode < 300)
-        cb data
+        cb responseData
       else
-        @logger.error "#{res.statusCode} #{data.message}"
+        @logger.error "#{res.statusCode} #{responseData.message}"
   get: (url, data, cb) ->
     unless cb?
       [cb, data] = [data, null]
@@ -85,7 +85,9 @@ class Github
           head: head
         if opts.message?
           body.commit_message = opts.message
-        @post "https://api.github.com/repos/#{@qualified_repo repo}/merges", body, (data) ->
+        @post "https://api.github.com/repos/#{@qualified_repo repo}/merges", body, (data) =>
+          unless data?
+            return @logger.error "Nothing to merge"
           cb sha: data.commit.sha, message: data.commit.commit.message, url: data.commit.url
 
 module.exports = github = (robot) ->
