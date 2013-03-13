@@ -1,4 +1,4 @@
-# A Hubot-compatible Github API wrapper for Node.js #
+# A neat thing #
 
 [![Build Status]](http://travis-ci.org/iangreenleaf/githubot)
 
