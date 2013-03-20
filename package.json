@@ -22,6 +22,6 @@
   "devDependencies": {
     "mocha": "1.x",
     "coffee-script": "1.x",
-    "nock": "0.x"
+    "nock": ">= 0.15.0"
   }
 }

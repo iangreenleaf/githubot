@@ -1,4 +1,4 @@
-[ gh, assert, nock, mock_robot, package_version ] = require "./test_helper"
+[ gh, assert, nock, mock_robot ] = require "./test_helper"
 
 describe "github api", ->
   describe "general purpose", ->
@@ -28,7 +28,7 @@ describe "github api", ->
         network.matchHeader('Accept', 'application/vnd.github.beta+json')
         gh.request "GET", "repos/foo/bar/branches", success done
       it "includes User-Agent header", (done) ->
-        network.matchHeader('User-Agent', "GitHubot/#{package_version}")
+        network.matchHeader('User-Agent', /GitHubot\/\d+\.\d+\.\d+/)
         gh.request "GET", "repos/foo/bar/branches", success done
       it "returns parsed json", (done) ->
         gh.request "GET", "repos/foo/bar/branches", (data) ->

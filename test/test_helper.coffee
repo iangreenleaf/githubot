@@ -11,8 +11,7 @@ mock_robot =
 
 gh = require("..") mock_robot
 nock = require("nock")
-package_version = require("../package.json")["version"]
-module.exports = [ gh, require("assert"), nock, mock_robot, package_version ]
+module.exports = [ gh, require("assert"), nock, mock_robot ]
 
 beforeEach ->
   nock.cleanAll()
