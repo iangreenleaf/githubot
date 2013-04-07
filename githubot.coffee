@@ -39,17 +39,24 @@ class Github
     args.push "" if verb is "DELETE" and not data?
     task = run: (cb) -> req[verb.toLowerCase()](args...) cb
     @requestQueue.push task, (err, res, body) =>
-      return @logger.error err if err?
+      if err?
+        @logger.error err
+        @errorHandler?(statusCode: res?.statusCode, error: err)
+        return
 
       try
         responseData = JSON.parse body if body
       catch e
-        return @logger.error "Could not parse response: #{body}"
+        @logger.error "Could not parse response: #{body}"
+        @errorHandler?(statusCode: res.statusCode, body: body)
+        return
 
       if (200 <= res.statusCode < 300)
         cb responseData
       else
         @logger.error "#{res.statusCode} #{responseData.message}"
+        @errorHandler?(statusCode: res.statusCode, message: responseData.message, body: body)
+
   get: (url, data, cb) ->
     unless cb?
       [cb, data] = [data, null]

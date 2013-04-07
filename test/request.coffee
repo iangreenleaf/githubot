@@ -93,6 +93,20 @@ describe "github api", ->
       assert.fail(null, null, "Success callback should not be invoked")
     beforeEach ->
       network = nock("https://api.github.com").get("/foo")
+    http = require "scoped-http-client"
+    kablooie = ->
+      mock = {
+        header: -> mock,
+        get: () -> (cb) ->
+          cb new Error "Kablooie!"
+      }
+      http._old_create = http.create
+      http.create = -> mock
+    afterEach ->
+      if http._old_create?
+        http.create = http._old_create
+        http._old_create = null
+
     it "complains about failed response", (done) ->
       network.reply(401, message: "Bad credentials")
       mock_robot.onError = (msg) ->
@@ -106,19 +120,46 @@ describe "github api", ->
         done()
       gh.get "/foo", never_called
     it "complains about client errors", (done) ->
-      mock = {
-        header: -> mock,
-        get: () -> (cb) ->
-          cb new Error "Kablooie!"
-      }
-      http = require "scoped-http-client"
-      http._old_create = http.create
-      http.create = -> mock
+      kablooie()
       mock_robot.onError = (msg) ->
         assert.ok /kablooie/i.exec msg
         done()
       gh.get "/foo", never_called
-      http.create = http._old_create
+
+    describe "with error handler", ->
+      beforeEach ->
+        network = nock("https://api.github.com")
+          .get("/foo")
+      afterEach ->
+        gh.errorHandler = null
+      it "calls handler on error", (done) ->
+        network.reply(406, message: "I hate you!")
+        gh.errorHandler = (response) ->
+          assert.equal 406, response.statusCode
+          assert.equal "I hate you!", response.message
+          assert.equal '{"message":"I hate you!"}', response.body
+          done()
+        gh.get "/foo", never_called
+
+      it "doesn't call handler on success", (done) ->
+        network.reply(201, message: "Hooray!")
+        gh.errorHandler = never_called
+        gh.get "/foo", -> done()
+
+      it "passes body if can't parse response", (done) ->
+        network.reply(500, "WTF$$%@! SERVER VOMIT")
+        gh.errorHandler = (response) ->
+          assert.equal 500, response.statusCode
+          assert.equal "WTF$$%@! SERVER VOMIT", response.body
+          done()
+        gh.get "/foo", never_called
+
+      it "passes error if request failed", (done) ->
+        kablooie()
+        gh.errorHandler = (response) ->
+          assert.ok /kablooie/i.exec response.error
+          done()
+        gh.get "/foo", never_called
 
     describe "without robot given", ->
       before ->
