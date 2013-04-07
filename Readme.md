@@ -49,6 +49,34 @@ If you don't have a token yet, run this:
 
 Enter your Github password when prompted. When you get a response, look for the "token" value.
 
+## Helpful Hubot ##
+
+Hubot will log errors if a request fails.
+
+If `process.env.HUBOT_GITHUB_USER` is present, we can help you guess a repo's full name:
+
+```coffeescript
+github.qualified_repo "githubot" # => "iangreenleaf/githubot"
+```
+
+This will happen with the bespoke methods as well:
+
+```coffeescript
+gh.branches "githubot", (branches) ->
+```
+
+### Options ###
+
+* `HUBOT_GITHUB_TOKEN`: GitHub API token. Required to perform authenticated actions.
+
+* `HUBOT_GITHUB_USER`: Default GitHub username to use if one is not given.
+
+* `HUBOT_GITHUB_API`: The base API URL. This is useful for Enterprise Github installations.
+
+  For example, `HUBOT_GITHUB_API='http://myprivate.github.int'`
+
+* `HUBOT_CONCURRENT_REQUESTS`: Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
+
 ## Bespoke API access ##
 
 Mostly a work in progress, but here's a taste of what I have in mind:
@@ -98,34 +126,6 @@ gh.branches( "foo/bar" ).merge "my_radical_feature", message: "Merge my radical 
 gh.branches( "foo/bar" ).delete "my_radical_feature", ->
   console.log "Deleted my branch!"
 ```
-
-## Helpful Hubot ##
-
-Hubot will log errors if a request fails.
-
-If `process.env.HUBOT_GITHUB_USER` is present, we can help you guess a repo's full name:
-
-```coffeescript
-github.qualified_repo "githubot" # => "iangreenleaf/githubot"
-```
-
-This will happen with the bespoke methods as well:
-
-```coffeescript
-gh.branches "githubot", (branches) ->
-```
-
-### Options ###
-
-* `HUBOT_GITHUB_TOKEN`: GitHub API token. Required to perform authenticated actions.
-
-* `HUBOT_GITHUB_USER`: Default GitHub username to use if one is not given.
-
-* `HUBOT_GITHUB_API`: The base API URL. This is useful for Enterprise Github installations.
-
-  For example, `HUBOT_GITHUB_API='http://myprivate.github.int'`
-
-* `HUBOT_CONCURRENT_REQUESTS`: Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
 
 ## Contributing ##
 
