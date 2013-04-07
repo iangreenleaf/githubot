@@ -89,11 +89,13 @@ describe "github api", ->
 
   describe "errors", ->
     network = null
+    http = require "scoped-http-client"
     never_called = ->
       assert.fail(null, null, "Success callback should not be invoked")
     beforeEach ->
       network = nock("https://api.github.com").get("/foo")
-    http = require "scoped-http-client"
+    afterEach ->
+      mock_robot.onError = null
     kablooie = ->
       mock = {
         header: -> mock,
@@ -127,28 +129,30 @@ describe "github api", ->
       gh.get "/foo", never_called
 
     describe "with error handler", ->
+      defaultHandler = gh._errorHandler
       beforeEach ->
         network = nock("https://api.github.com")
           .get("/foo")
       afterEach ->
-        gh.errorHandler = null
+        gh._errorHandler = defaultHandler
+
       it "calls handler on error", (done) ->
         network.reply(406, message: "I hate you!")
-        gh.errorHandler = (response) ->
+        gh.handleErrors (response) ->
           assert.equal 406, response.statusCode
-          assert.equal "I hate you!", response.message
+          assert.equal "I hate you!", response.error
           assert.equal '{"message":"I hate you!"}', response.body
           done()
         gh.get "/foo", never_called
 
       it "doesn't call handler on success", (done) ->
         network.reply(201, message: "Hooray!")
-        gh.errorHandler = never_called
+        gh.handleErrors never_called
         gh.get "/foo", -> done()
 
       it "passes body if can't parse response", (done) ->
         network.reply(500, "WTF$$%@! SERVER VOMIT")
-        gh.errorHandler = (response) ->
+        gh.handleErrors (response) ->
           assert.equal 500, response.statusCode
           assert.equal "WTF$$%@! SERVER VOMIT", response.body
           done()
@@ -156,9 +160,19 @@ describe "github api", ->
 
       it "passes error if request failed", (done) ->
         kablooie()
-        gh.errorHandler = (response) ->
+        gh.handleErrors (response) ->
           assert.ok /kablooie/i.exec response.error
           done()
+        gh.get "/foo", never_called
+
+      it "still logs errors", (done) ->
+        network.reply(406, message: "I hate you!")
+        expected = 2
+        cb = ->
+          expected -= 1
+          done() if expected is 0
+        mock_robot.onError = cb
+        gh.handleErrors cb
         gh.get "/foo", never_called
 
     describe "without robot given", ->

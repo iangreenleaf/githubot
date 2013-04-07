@@ -40,22 +40,26 @@ class Github
     task = run: (cb) -> req[verb.toLowerCase()](args...) cb
     @requestQueue.push task, (err, res, body) =>
       if err?
-        @logger.error err
-        @errorHandler?(statusCode: res?.statusCode, error: err)
-        return
+        return @_errorHandler
+          statusCode: res?.statusCode
+          body: res?.body
+          error: err
 
       try
         responseData = JSON.parse body if body
       catch e
-        @logger.error "Could not parse response: #{body}"
-        @errorHandler?(statusCode: res.statusCode, body: body)
-        return
+        return @_errorHandler
+          statusCode: res.statusCode
+          body: body
+          error: "Could not parse response: #{body}"
 
       if (200 <= res.statusCode < 300)
         cb responseData
       else
-        @logger.error "#{res.statusCode} #{responseData.message}"
-        @errorHandler?(statusCode: res.statusCode, message: responseData.message, body: body)
+        @_errorHandler
+          statusCode: res.statusCode
+          body: body
+          error: responseData.message
 
   get: (url, data, cb) ->
     unless cb?
@@ -65,6 +69,20 @@ class Github
     @request "GET", url, cb
   post: (url, data, cb) ->
     @request "POST", url, data, cb
+
+  handleErrors: (callback) ->
+    @_errorHandler = (response) =>
+      callback response
+      @_loggerErrorHandler response
+
+  _loggerErrorHandler: (response) ->
+    message = response.error
+    message = "#{response.statusCode} #{message}" if response.statusCode?
+    @logger.error message
+
+  _errorHandler: (response) ->
+    @_loggerErrorHandler response
+
   branches: (repo, cb) ->
     if cb?
       @get("repos/#{@qualified_repo repo}/branches", cb)
