@@ -49,9 +49,24 @@ If you don't have a token yet, run this:
 
 Enter your Github password when prompted. When you get a response, look for the "token" value.
 
-## Helpful Hubot ##
+## Handling errors ##
 
-Hubot will log errors if a request fails.
+GitHubot will log errors automatically if it has a logger. Used with Hubot, these will go to the Hubot logger.
+
+If your script would like to catch errors as well, define an extra callback:
+
+```coffeescript
+github.handleErrors (response) ->
+  console.log "Oh no! #{response.statusCode}!"
+```
+
+The callback takes a `response` argument with the following keys:
+
+* `error`: The error message.
+* `statusCode`: The status code of the API response, if present.
+* `body`: The body of the API response, if present.
+
+## Helpful Hubot ##
 
 If `process.env.HUBOT_GITHUB_USER` is present, we can help you guess a repo's full name:
 
