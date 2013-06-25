@@ -165,4 +165,4 @@ ask and I can probably point you in the right direction.
 
 
 
-[Build Status]: https://secure.travis-ci.org/iangreenleaf/githubot.png?branch=master
+[Build Status]: https://travis-ci.org/iangreenleaf/githubot.png?branch=master
