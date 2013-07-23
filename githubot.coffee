@@ -27,11 +27,12 @@ class Github
       [cb, data] = [data, null]
 
     url_api_base = process.env.HUBOT_GITHUB_API || "https://api.github.com"
+    api_version = process.env.HUBOT_GITHUB_API_VERSION || "beta"
 
     if url[0..3] isnt "http"
       url = "/#{url}" unless url[0] is "/"
       url = "#{url_api_base}#{url}"
-    req = http.create(url).header("Accept", "application/vnd.github.beta+json")
+    req = http.create(url).header("Accept", "application/vnd.github.#{api_version}+json")
     req = req.header("User-Agent", "GitHubot/#{version}")
     req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
     args = []

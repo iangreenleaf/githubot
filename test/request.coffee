@@ -27,6 +27,11 @@ describe "github api", ->
       it "includes accept header", (done) ->
         network.matchHeader('Accept', 'application/vnd.github.beta+json')
         gh.request "GET", "repos/foo/bar/branches", success done
+      it "allows setting API version", (done) ->
+        process.env.HUBOT_GITHUB_API_VERSION = "preview"
+        network.matchHeader('Accept', 'application/vnd.github.preview+json')
+        gh.request "GET", "repos/foo/bar/branches", success done
+        delete process.env.HUBOT_GITHUB_API_VERSION
       it "includes User-Agent header", (done) ->
         network.matchHeader('User-Agent', /GitHubot\/\d+\.\d+\.\d+/)
         gh.request "GET", "repos/foo/bar/branches", success done

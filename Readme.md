@@ -90,6 +90,8 @@ gh.branches "githubot", (branches) ->
 
   For example, `HUBOT_GITHUB_API='http://myprivate.github.int'`
 
+* `HUBOT_GITHUB_API_VERSION`: Version of the API, i.e. "v3", "beta" or "preview". Defaults to "beta".
+
 * `HUBOT_CONCURRENT_REQUESTS`: Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
 
 ## Bespoke API access ##
