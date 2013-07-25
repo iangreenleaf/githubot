@@ -7,7 +7,7 @@ version = require("./package.json")["version"]
 process.env.HUBOT_CONCURRENT_REQUESTS ?= 20
 
 class Github
-  constructor: (@logger) ->
+  constructor: (@logger, @apiVersion) ->
     @requestQueue = async.queue (task, cb) =>
       task.run cb
     , process.env.HUBOT_CONCURRENT_REQUESTS
@@ -27,12 +27,11 @@ class Github
       [cb, data] = [data, null]
 
     url_api_base = process.env.HUBOT_GITHUB_API || "https://api.github.com"
-    api_version = process.env.HUBOT_GITHUB_API_VERSION || "beta"
 
     if url[0..3] isnt "http"
       url = "/#{url}" unless url[0] is "/"
       url = "#{url_api_base}#{url}"
-    req = http.create(url).header("Accept", "application/vnd.github.#{api_version}+json")
+    req = http.create(url).header("Accept", "application/vnd.github.#{@apiVersion}+json")
     req = req.header("User-Agent", "GitHubot/#{version}")
     req = req.header("Authorization", "token #{oauth_token}") if (oauth_token = process.env.HUBOT_GITHUB_TOKEN)?
     args = []
@@ -116,8 +115,8 @@ class Github
             return @logger.error "Nothing to merge"
           cb sha: data.sha, message: data.commit.message, url: data.url
 
-module.exports = github = (robot) ->
-  new Github robot.logger
+module.exports = github = (robot, options = apiVersion: 'beta') ->
+  new Github robot.logger, options.apiVersion
 
 github[method] = func for method,func of Github.prototype
 

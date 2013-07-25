@@ -15,6 +15,13 @@ module.exports = (robot) ->
   github = require('githubot')(robot)
 ```
 
+Specify Github API version:
+
+```coffeescripts
+module.exports = (robot) ->
+  github = require('githubot')(robot, apiVersion: 'preview')
+```
+
 Or use it on its own:
 
 ```coffeescript
@@ -89,8 +96,6 @@ gh.branches "githubot", (branches) ->
 * `HUBOT_GITHUB_API`: The base API URL. This is useful for Enterprise Github installations.
 
   For example, `HUBOT_GITHUB_API='http://myprivate.github.int'`
-
-* `HUBOT_GITHUB_API_VERSION`: Version of the API, i.e. "v3", "beta" or "preview". Defaults to "beta".
 
 * `HUBOT_CONCURRENT_REQUESTS`: Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
 
