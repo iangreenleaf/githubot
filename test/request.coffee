@@ -27,6 +27,10 @@ describe "github api", ->
       it "includes accept header", (done) ->
         network.matchHeader('Accept', 'application/vnd.github.beta+json')
         gh.request "GET", "repos/foo/bar/branches", success done
+      it "allows setting API version", (done) ->
+        ghPreview = require("..") mock_robot, apiVersion: 'preview'
+        network.matchHeader('Accept', 'application/vnd.github.preview+json')
+        ghPreview.request "GET", "repos/foo/bar/branches", success done
       it "includes User-Agent header", (done) ->
         network.matchHeader('User-Agent', /GitHubot\/\d+\.\d+\.\d+/)
         gh.request "GET", "repos/foo/bar/branches", success done
