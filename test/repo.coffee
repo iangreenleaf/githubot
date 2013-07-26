@@ -97,10 +97,9 @@ describe "repo api", ->
         network.delete("/repos/foo/bar/git/refs/heads/anotherBranch")
           .reply(204, {})
         gh.branches( "foo/bar" ).delete @branchName, "anotherBranch", ->
-          setTimeout ->
+          nextTick ->
             network.done()
             done()
-          , 1
 
     describe "merge", ->
       beforeEach ->
