@@ -15,6 +15,13 @@ module.exports = (robot) ->
   github = require('githubot')(robot)
 ```
 
+Specify Github API version:
+
+```coffeescripts
+module.exports = (robot) ->
+  github = require('githubot')(robot, apiVersion: 'preview')
+```
+
 Or use it on its own:
 
 ```coffeescript
