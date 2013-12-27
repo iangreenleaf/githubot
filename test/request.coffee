@@ -78,18 +78,38 @@ describe "github api", ->
       it "sends request", (done) ->
         gh.post "gists", data, success done
 
+    describe "put", ->
+      data = description: "A test gist", public: true, files: { "abc.txt": { content: "abcdefg" } }
+      response = url: "http://api.github.com/gists/1", id: 1
+      beforeEach ->
+        network = nock("https://api.github.com")
+          .put("/gists", data)
+          .reply(201, response)
+      it "sends request", (done) ->
+        gh.put "gists", data, success done
+
+    describe "patch", ->
+      data = description: "A test gist", public: true, files: { "abc.txt": { content: "abcdefg" } }
+      response = url: "http://api.github.com/gists/1", id: 1
+      beforeEach ->
+        network = nock("https://api.github.com")
+          .patch("/gists", data)
+          .reply(201, response)
+      it "sends request", (done) ->
+        gh.patch "gists", data, success done
+
     describe "delete", ->
       it "sends request", (done) ->
         network = nock("https://api.github.com")
           .delete("/gists/345")
           .reply(204)
-        gh.request "DELETE", "gists/345", success done
+        gh.delete "gists/345", success done
       it "includes empty body", (done) ->
         network = nock("https://api.github.com")
           .delete("/gists/345", "")
           .matchHeader("Content-Length", 0)
           .reply(204)
-        gh.request "DELETE", "gists/345", success done
+        gh.delete "gists/345", success done
 
   describe "errors", ->
     network = null

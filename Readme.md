@@ -42,6 +42,9 @@ github.get "users/foo/repos", {type: "owner"}, (repos) ->
 data = { description: "A test gist", public: true, files: { "abc.txt": { content: "abcdefg" } } }
 github.post "gists", data, (gist) ->
   console.log gist.url
+
+github.patch "repos/my/repo/issues/11", {status: "closed"}, (issue) ->
+  console.log issue.html_url
 ```
 
 ## Authentication ##

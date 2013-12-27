@@ -67,8 +67,18 @@ class Github
     if data?
       url += "?" + querystring.stringify data
     @request "GET", url, cb
+
   post: (url, data, cb) ->
     @request "POST", url, data, cb
+
+  delete: (url, cb) ->
+    @request "DELETE", url, cb
+
+  put: (url, data, cb) ->
+    @request "PUT", url, data, cb
+
+  patch: (url, data, cb) ->
+    @request "PATCH", url, data, cb
 
   handleErrors: (callback) ->
     @_errorHandler = (response) =>
