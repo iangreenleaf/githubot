@@ -71,8 +71,8 @@ class Github
   post: (url, data, cb) ->
     @request "POST", url, data, cb
 
-  delete: (url, data, cb) ->
-    @request "DELETE", url, data, cb
+  delete: (url, cb) ->
+    @request "DELETE", url, null, cb
 
   put: (url, data, cb) ->
     @request "PUT", url, data, cb
