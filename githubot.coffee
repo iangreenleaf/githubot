@@ -124,6 +124,18 @@ class Github
           unless data?
             return @logger.error "Nothing to merge"
           cb sha: data.sha, message: data.commit.message, url: data.url
+      deploy: (ref, pl, desc, cb) =>
+        [opts,cb] = [{},opts] unless cb?
+        body =
+          ref: ref ? ref ? "master"
+        if pl?
+          body.payload = pl
+        if desc?
+          body.description = desc
+        @post "repos/#{@qualified_repo repo}/deployments", body, (data) =>
+          unless data?
+            return @logger.error "Nothing to merge"
+          cb sha: data.sha, description: data.description, url: data.url
 
 module.exports = github = (robot, options = apiVersion: 'beta') ->
   new Github robot.logger, options.apiVersion
