@@ -134,7 +134,7 @@ describe "repo api", ->
             201
             , sha: @branchName, url: "xyz/1", description: "abc"
           )
-        gh.branches("foo/bar").deploy @branchName, @payload, @description, (status) =>
+        gh.deployments("foo/bar").create @branchName, {payload: @payload, description: @description}, (status) =>
           assert.deepEqual status,
             sha: @branchName, description: "abc", url: "xyz/1"
           network.done()

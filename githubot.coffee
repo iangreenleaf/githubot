@@ -124,17 +124,24 @@ class Github
           unless data?
             return @logger.error "Nothing to merge"
           cb sha: data.sha, message: data.commit.message, url: data.url
-      deploy: (ref, pl, desc, cb) =>
+
+  deployments: (repo, cb) ->
+    if cb?
+      @get("repos/#{@qualified_repo repo}/deployments", cb)
+    else
+      create: (branchName, opts, cb) =>
         [opts,cb] = [{},opts] unless cb?
         body =
-          ref: ref ? ref ? "master"
-        if pl?
-          body.payload = pl
-        if desc?
-          body.description = desc
+          ref: branchName ? branchName ? "master"
+        if opts.force?
+          body.force = opts.force
+        if opts.payload?
+          body.payload = opts.payload
+        if opts.auto_merge?
+          body.auto_merge = opts.auto_merge
+        if opts.description?
+          body.description = opts.description
         @post "repos/#{@qualified_repo repo}/deployments", body, (data) =>
-          unless data?
-            return @logger.error "Nothing to merge"
           cb sha: data.sha, description: data.description, url: data.url
 
 module.exports = github = (robot, options = apiVersion: 'beta') ->
