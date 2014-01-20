@@ -143,6 +143,8 @@ class Github
           body.description = opts.description
         @post "repos/#{@qualified_repo repo}/deployments", body, (data) =>
           cb sha: data.sha, description: data.description, url: data.url
+      status: (id, cb) =>
+        @get("repos/#{@qualified_repo repo}/deployments/#{id}/statuses", cb)
 
 module.exports = github = (robot, options = apiVersion: 'beta') ->
   new Github robot.logger, options.apiVersion

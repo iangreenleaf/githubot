@@ -120,7 +120,7 @@ describe "repo api", ->
           network.done()
           done()
 
-    describe "deploy", ->
+    describe "create deployment", ->
       beforeEach ->
         @branchName = "newbranch"
         @payload = '{"environment":"production","deploy_user":"atmos","room_id":123456}'
@@ -137,6 +137,23 @@ describe "repo api", ->
         gh.deployments("foo/bar").create @branchName, {payload: @payload, description: @description}, (status) =>
           assert.deepEqual status,
             sha: @branchName, description: "abc", url: "xyz/1"
+          network.done()
+          done()
+
+    describe "get deployment status", ->
+      beforeEach ->
+        @statusId = "123"
+
+      it "succeeds", (done) ->
+        network = nock("https://api.github.com")
+          .get("/repos/foo/bar/deployments/#{@statusId}/statuses")
+          .reply(
+            201
+            , [{id: @statusId, state: "success", url: "xyz/1", description: "abc"}]
+          )
+        gh.deployments("foo/bar").status @statusId, (status) =>
+          assert.deepEqual status[0],
+            id: @statusId, state: "success", url: "xyz/1", description: "abc"
           network.done()
           done()
 
