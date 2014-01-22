@@ -125,6 +125,27 @@ class Github
             return @logger.error "Nothing to merge"
           cb sha: data.sha, message: data.commit.message, url: data.url
 
+  deployments: (repo, cb) ->
+    if cb?
+      @get("repos/#{@qualified_repo repo}/deployments", cb)
+    else
+      create: (branchName, opts, cb) =>
+        [opts,cb] = [{},opts] unless cb?
+        body =
+          ref: branchName ? "master"
+        if opts.force?
+          body.force = opts.force
+        if opts.payload?
+          body.payload = opts.payload
+        if opts.auto_merge?
+          body.auto_merge = opts.auto_merge
+        if opts.description?
+          body.description = opts.description
+        @post "repos/#{@qualified_repo repo}/deployments", body, (data) =>
+          cb sha: data.sha, description: data.description, url: data.url
+      status: (id, cb) =>
+        @get("repos/#{@qualified_repo repo}/deployments/#{id}/statuses", cb)
+
 module.exports = github = (robot, options = apiVersion: 'beta') ->
   new Github robot.logger, options.apiVersion
 

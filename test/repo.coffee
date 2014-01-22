@@ -120,6 +120,43 @@ describe "repo api", ->
           network.done()
           done()
 
+    describe "create deployment", ->
+      beforeEach ->
+        @branchName = "newbranch"
+        @payload = '{"environment":"production","deploy_user":"atmos","room_id":123456}'
+        @description = "deploying my sweet branch"
+
+      it "succeeds", (done) ->
+        network = nock("https://api.github.com")
+          .post("/repos/foo/bar/deployments",
+            payload: @payload, ref: @branchName, description: @description)
+          .reply(
+            201
+            , sha: @branchName, url: "xyz/1", description: "abc"
+          )
+        gh.deployments("foo/bar").create @branchName, {payload: @payload, description: @description}, (status) =>
+          assert.deepEqual status,
+            sha: @branchName, description: "abc", url: "xyz/1"
+          network.done()
+          done()
+
+    describe "get deployment status", ->
+      beforeEach ->
+        @statusId = "123"
+
+      it "succeeds", (done) ->
+        network = nock("https://api.github.com")
+          .get("/repos/foo/bar/deployments/#{@statusId}/statuses")
+          .reply(
+            201
+            , [{id: @statusId, state: "success", url: "xyz/1", description: "abc"}]
+          )
+        gh.deployments("foo/bar").status @statusId, (status) =>
+          assert.deepEqual status[0],
+            id: @statusId, state: "success", url: "xyz/1", description: "abc"
+          network.done()
+          done()
+
       context "with base specified", (done) ->
         beforeEach ->
           @base = "targetbranch"
