@@ -132,7 +132,7 @@ class Github
       create: (branchName, opts, cb) =>
         [opts,cb] = [{},opts] unless cb?
         body =
-          ref: branchName ? branchName ? "master"
+          ref: branchName ? "master"
         if opts.force?
           body.force = opts.force
         if opts.payload?
