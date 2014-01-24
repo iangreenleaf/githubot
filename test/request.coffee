@@ -24,6 +24,11 @@ describe "github api", ->
         network.matchHeader("Authorization", "token 789abc")
         gh.request "GET", "repos/foo/bar/branches", success done
         delete process.env.HUBOT_GITHUB_TOKEN
+      it "overrides the oauth token manually", (done) ->
+        process.env.HUBOT_GITHUB_TOKEN = "789abc"
+        network.matchHeader("Authorization", "token abc")
+        gh.request "GET", "repos/foo/bar/branches", token: 'abc', success done
+        delete process.env.HUBOT_GITHUB_TOKEN
       it "includes accept header", (done) ->
         network.matchHeader('Accept', 'application/vnd.github.beta+json')
         gh.request "GET", "repos/foo/bar/branches", success done
