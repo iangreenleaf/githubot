@@ -22,6 +22,17 @@ describe "repo api", ->
       gh.branches "foo/bar", (data) ->
         assert.deepEqual response, data
         done()
+    it "allows per-request overrides", (done) ->
+      network = nock("https://special.api.dev")
+        .get("/repos/bar/baz/branches")
+        .reply(200, response)
+      gh.withOptions(
+          apiRoot: "https://special.api.dev"
+          defaultUser: "bar"
+          defaultRepo: "baz"
+        )
+        .branches null, success done
+      delete process.env.HUBOT_GITHUB_USER
 
     describe "create", ->
       beforeEach ->

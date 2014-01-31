@@ -4,13 +4,11 @@ querystring = require "querystring"
 
 version = require("./package.json")["version"]
 
-process.env.HUBOT_CONCURRENT_REQUESTS ?= 20
-
 class Github
   constructor: (@logger, @options) ->
     @requestQueue = async.queue (task, cb) =>
       task.run cb
-    , process.env.HUBOT_CONCURRENT_REQUESTS
+    , @_opt "concurrentRequests"
   withOptions: (specialOptions) ->
     newOpts = {}
     newOpts[k] = v for k,v of @options
@@ -20,12 +18,12 @@ class Github
     g
   qualified_repo: (repo) ->
     unless repo?
-      unless (repo = process.env.HUBOT_GITHUB_REPO)?
+      unless (repo = @_opt "defaultRepo")?
         @logger.error "Default Github repo not specified"
         return null
     repo = repo.toLowerCase()
     return repo unless repo.indexOf("/") is -1
-    unless (user = process.env.HUBOT_GITHUB_USER)?
+    unless (user = @_opt "defaultUser")?
       @logger.error "Default Github user not specified"
       return repo
     "#{user}/#{repo}"
@@ -33,7 +31,7 @@ class Github
     unless cb?
       [cb, data] = [data, null]
 
-    url_api_base = process.env.HUBOT_GITHUB_API || "https://api.github.com"
+    url_api_base = @_opt("apiRoot")
 
     if url[0..3] isnt "http"
       url = "/#{url}" unless url[0] is "/"
@@ -161,7 +159,16 @@ class Github
     @options[optName] ? @_optFromEnv(optName)
   _optFromEnv: (optName) ->
     switch optName
-      when "token" then process.env.HUBOT_GITHUB_TOKEN
+      when "token"
+        process.env.HUBOT_GITHUB_TOKEN
+      when "concurrentRequests"
+        process.env.HUBOT_CONCURRENT_REQUESTS ? 20
+      when "defaultRepo"
+        process.env.HUBOT_GITHUB_REPO
+      when "defaultUser"
+        process.env.HUBOT_GITHUB_USER
+      when "apiRoot"
+        process.env.HUBOT_GITHUB_API ? "https://api.github.com"
       else null
 
 module.exports = github = (robot, options = apiVersion: 'beta') ->
@@ -178,4 +185,4 @@ github.logger = {
 
 github.requestQueue = async.queue (task, cb) =>
   task.run cb
-, process.env.HUBOT_CONCURRENT_REQUESTS
+, process.env.HUBOT_CONCURRENT_REQUESTS ? 20
