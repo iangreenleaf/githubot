@@ -169,9 +169,11 @@ class Github
         process.env.HUBOT_GITHUB_USER
       when "apiRoot"
         process.env.HUBOT_GITHUB_API ? "https://api.github.com"
+      when "apiVersion"
+        process.env.HUBOT_GITHUB_API_VERSION ? "beta"
       else null
 
-module.exports = github = (robot, options = apiVersion: 'beta') ->
+module.exports = github = (robot, options = {}) ->
   new Github robot.logger, options
 
 github[method] = func for method,func of Github.prototype

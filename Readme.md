@@ -114,6 +114,10 @@ in increasing order of precedence:
 * `token`/`process.env.HUBOT_GITHUB_TOKEN`:
   GitHub API token. Required to perform authenticated actions.
 
+* `apiVersion`/`process.env.HUBOT_GITHUB_API_VERSION`:
+  [Version of the API](http://developer.github.com/v3/versions/)
+  to access. Defaults to 'beta'.
+
 * `defaultUser`/`process.env.HUBOT_GITHUB_USER`:
   Default GitHub username to use if one is not given.
 
