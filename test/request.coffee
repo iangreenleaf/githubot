@@ -24,11 +24,6 @@ describe "github api", ->
         network.matchHeader("Authorization", "token 789abc")
         gh.request "GET", "repos/foo/bar/branches", success done
         delete process.env.HUBOT_GITHUB_TOKEN
-      it "overrides the oauth token manually", (done) ->
-        process.env.HUBOT_GITHUB_TOKEN = "789abc"
-        network.matchHeader("Authorization", "token abc")
-        gh.request "GET", "repos/foo/bar/branches", token: 'abc', success done
-        delete process.env.HUBOT_GITHUB_TOKEN
       it "includes accept header", (done) ->
         network.matchHeader('Accept', 'application/vnd.github.beta+json')
         gh.request "GET", "repos/foo/bar/branches", success done
@@ -36,6 +31,26 @@ describe "github api", ->
         ghPreview = require("..") mock_robot, apiVersion: 'preview'
         network.matchHeader('Accept', 'application/vnd.github.preview+json')
         ghPreview.request "GET", "repos/foo/bar/branches", success done
+      it "allows setting API version for single request", (done) ->
+        network.matchHeader('Accept', 'application/vnd.github.special+json')
+        gh.withOptions(apiVersion: 'special').request "GET", "repos/foo/bar/branches", success done
+      it "allows setting the oauth token for single request", (done) ->
+        process.env.HUBOT_GITHUB_TOKEN = "789xyz"
+        network.matchHeader("Authorization", "token abc")
+        gh.withOptions(token: 'abc').request "GET", "repos/foo/bar/branches", success done
+        delete process.env.HUBOT_GITHUB_TOKEN
+      it "doesn't persist per-request options", (done) ->
+        network.matchHeader('Accept', 'application/vnd.github.special+json')
+        gh.withOptions(apiVersion: 'special').request "GET", "repos/foo/bar/branches", ->
+          network.done()
+          network2 = nock("https://api.github.com")
+            .get("/repos/baz/bar/branches")
+            .matchHeader('Accept', 'application/vnd.github.beta+json')
+            .reply(200, response)
+          # Should revert to the defaults on this request
+          gh.request "GET", "repos/baz/bar/branches", ->
+            network2.done()
+            done()
       it "includes User-Agent header", (done) ->
         network.matchHeader('User-Agent', /GitHubot\/\d+\.\d+\.\d+/)
         gh.request "GET", "repos/foo/bar/branches", success done

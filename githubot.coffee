@@ -7,10 +7,17 @@ version = require("./package.json")["version"]
 process.env.HUBOT_CONCURRENT_REQUESTS ?= 20
 
 class Github
-  constructor: (@logger, @apiVersion) ->
+  constructor: (@logger, @options) ->
     @requestQueue = async.queue (task, cb) =>
       task.run cb
     , process.env.HUBOT_CONCURRENT_REQUESTS
+  withOptions: (specialOptions) ->
+    newOpts = {}
+    newOpts[k] = v for k,v of @options
+    newOpts[k] = v for k,v of specialOptions
+    g = new @constructor @logger, newOpts
+    g.requestQueue = @requestQueue
+    g
   qualified_repo: (repo) ->
     unless repo?
       unless (repo = process.env.HUBOT_GITHUB_REPO)?
@@ -31,13 +38,9 @@ class Github
     if url[0..3] isnt "http"
       url = "/#{url}" unless url[0] is "/"
       url = "#{url_api_base}#{url}"
-    req = http.create(url).header("Accept", "application/vnd.github.#{@apiVersion}+json")
+    req = http.create(url).header("Accept", "application/vnd.github.#{@_opt "apiVersion"}+json")
     req = req.header("User-Agent", "GitHubot/#{version}")
-    if data?.token
-      oauth_token = data.token
-      delete data.token
-    else
-      oauth_token = process.env.HUBOT_GITHUB_TOKEN
+    oauth_token = @_opt "token"
     req = req.header("Authorization", "token #{oauth_token}") if oauth_token?
     args = []
     args.push JSON.stringify data if data?
@@ -151,8 +154,16 @@ class Github
       status: (id, cb) =>
         @get("repos/#{@qualified_repo repo}/deployments/#{id}/statuses", cb)
 
+  _opt: (optName) ->
+    @options ?= {}
+    @options[optName] ? @_optFromEnv(optName)
+  _optFromEnv: (optName) ->
+    switch optName
+      when "token" then process.env.HUBOT_GITHUB_TOKEN
+      else null
+
 module.exports = github = (robot, options = apiVersion: 'beta') ->
-  new Github robot.logger, options.apiVersion
+  new Github robot.logger, options
 
 github[method] = func for method,func of Github.prototype
 
