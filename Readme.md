@@ -21,12 +21,7 @@ Or use it on its own:
 github = require('githubot')
 ```
 
-Specify a different Github API version (default is `beta`):
-
-```coffeescripts
-module.exports = (robot) ->
-  github = require('githubot')(robot, apiVersion: 'preview')
-```
+You can pass additional [options](#options) to the constructor if needed.
 
 ## Use ##
 
@@ -90,17 +85,45 @@ This will happen with the bespoke methods as well:
 gh.branches "githubot", (branches) ->
 ```
 
-### Options ###
+## Options ##
 
-* `HUBOT_GITHUB_TOKEN`: GitHub API token. Required to perform authenticated actions.
+### Passing options ###
 
-* `HUBOT_GITHUB_USER`: Default GitHub username to use if one is not given.
+Options may be passed to githubot in three different ways,
+in increasing order of precedence:
 
-* `HUBOT_GITHUB_API`: The base API URL. This is useful for Enterprise Github installations.
+1. Through shell environment variables.
+2. Through the constructor:
 
-  For example, `HUBOT_GITHUB_API='http://myprivate.github.int'`
+   ```coffeescript
+   github = require('githubot')(robot, apiVersion: 'preview')
+   ```
+3. Using `withOptions`, which lets you pass options to only some requests:
 
-* `HUBOT_CONCURRENT_REQUESTS`: Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
+   ```coffeescript
+   github = require('githubot')(robot)
+   preview = github.withOptions(apiVersion: 'preview')
+   # Uses preview API
+   preview.get '/preview/feature', -> # ...
+   # Uses regular API
+   github.get '/regular/feature', -> # ...
+   ```
+
+### Available options ###
+
+* `token`/`process.env.HUBOT_GITHUB_TOKEN`:
+  GitHub API token. Required to perform authenticated actions.
+
+* `defaultUser`/`process.env.HUBOT_GITHUB_USER`:
+  Default GitHub username to use if one is not given.
+
+* `apiRoot`/`process.env.HUBOT_GITHUB_API`:
+  The base API URL. This is useful for Enterprise Github installations.
+
+  For example, `HUBOT_GITHUB_API='https://myprivate.github.int'`
+
+* `concurrentRequests`/`process.env.HUBOT_CONCURRENT_REQUESTS`:
+  Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
 
 ## Bespoke API access ##
 
