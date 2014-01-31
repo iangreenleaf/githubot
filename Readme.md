@@ -133,14 +133,15 @@ in increasing order of precedence:
 
 Mostly a work in progress, but here's a taste of what I have in mind:
 
-### List branches ###
+### Branches ###
+#### List branches ####
 
 ```coffeescript
 gh.branches "foo/bar", (branches) ->
   console.log branches[0].name
 ```
 
-### Create a branch ###
+#### Create a branch ####
 
 ```coffeescript
 # Branch from master
@@ -152,7 +153,7 @@ gh.branches( "foo/bar" ).create "even_more_radical", from: "my_radical_feature",
   console.log branch.sha
 ```
 
-### Merge a branch ###
+#### Merge a branch ####
 
 ```coffeescript
 # Merge a branch into master
@@ -172,11 +173,38 @@ gh.branches( "foo/bar" ).merge "my_radical_feature", message: "Merge my radical 
   console.log mergeCommit.sha
 ```
 
-### Delete a branch ###
+#### Delete a branch ####
 
 ```coffeescript
 gh.branches( "foo/bar" ).delete "my_radical_feature", ->
   console.log "Deleted my branch!"
+```
+
+### Deployments ###
+
+*Note*: These methods are smart and automatically use the
+`cannonball-preview` version header. No intervention needed!
+
+#### List deployments ####
+
+```coffeescript
+gh.deployments "foo/bar", (deploys) ->
+  console.log deploys.length
+```
+
+#### Create a deployment ####
+
+```coffeescript
+gh.deployments("foo/bar")
+  .create 'my-branch', payload: {env: 'staging'}, description: "Ship it!", (deploy) =>
+    console.log deploy.url
+```
+
+#### Deployment statuses ####
+
+```coffeescript
+gh.deployments("foo/bar").status deployId, (deploys) ->
+  console.log deploys[0].state
 ```
 
 ## Contributing ##
