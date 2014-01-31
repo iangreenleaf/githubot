@@ -206,3 +206,14 @@ describe "repo api", ->
           network.done()
           done()
 
+      it "uses special version header", (done) ->
+        network = nock("https://api.github.com")
+          .get("/repos/foo/bar/deployments/#{@statusId}/statuses")
+          .matchHeader('Accept', 'application/vnd.github.cannonball-preview+json')
+          .reply(
+            201
+            , [{id: @statusId, state: "success", url: "xyz/1", description: "abc"}]
+          )
+        gh.deployments("foo/bar").status @statusId, (status) ->
+          network.done()
+          done()

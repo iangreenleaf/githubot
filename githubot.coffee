@@ -134,8 +134,10 @@ class Github
           cb sha: data.sha, message: data.commit.message, url: data.url
 
   deployments: (repo, cb) ->
+    # These features are in preview mode
+    self = @withOptions apiVersion: 'cannonball-preview'
     if cb?
-      @get("repos/#{@qualified_repo repo}/deployments", cb)
+      self.get("repos/#{self.qualified_repo repo}/deployments", cb)
     else
       create: (branchName, opts, cb) =>
         [opts,cb] = [{},opts] unless cb?
@@ -149,10 +151,10 @@ class Github
           body.auto_merge = opts.auto_merge
         if opts.description?
           body.description = opts.description
-        @post "repos/#{@qualified_repo repo}/deployments", body, (data) =>
+        self.post "repos/#{self.qualified_repo repo}/deployments", body, (data) =>
           cb sha: data.sha, description: data.description, url: data.url
       status: (id, cb) =>
-        @get("repos/#{@qualified_repo repo}/deployments/#{id}/statuses", cb)
+        self.get("repos/#{self.qualified_repo repo}/deployments/#{id}/statuses", cb)
 
   _opt: (optName) ->
     @options ?= {}
