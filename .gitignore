@@ -1,1 +1,5 @@
 node_modules
+lib
+
+# We auto-generate .npmignore from this file
+.npmignore

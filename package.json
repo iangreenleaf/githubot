@@ -2,14 +2,15 @@
   "author": "Ian Young <ian.greenleaf@gmail.com>",
   "name": "githubot",
   "description": "Hubot-compatible Github API wrapper for Node.js",
-  "version": "0.5.0",
+  "version": "1.0.0-beta2",
   "homepage": "https://github.com/iangreenleaf/githubot",
   "repository": {
     "type": "git",
     "url": "git@github.com:iangreenleaf/githubot.git"
   },
-  "main": "./src/githubot",
+  "main": "./lib/githubot",
   "scripts": {
+    "prepublish": "coffee -o lib -c src && cat .gitignore | grep -v '^lib$' > .npmignore",
     "test": "make test"
   },
   "engines": {
