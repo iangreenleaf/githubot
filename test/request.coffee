@@ -28,7 +28,7 @@ describe "github api", ->
         network.matchHeader('Accept', 'application/vnd.github.v3+json')
         gh.request "GET", "repos/foo/bar/branches", success done
       it "allows setting API version", (done) ->
-        ghPreview = require("..") mock_robot, apiVersion: 'preview'
+        ghPreview = require("../src/githubot") mock_robot, apiVersion: 'preview'
         network.matchHeader('Accept', 'application/vnd.github.preview+json')
         ghPreview.request "GET", "repos/foo/bar/branches", success done
       it "allows setting API version for single request", (done) ->
@@ -221,7 +221,7 @@ describe "github api", ->
 
     describe "without robot given", ->
       before ->
-        gh = require("..")
+        gh = require("../src/githubot")
       it "complains to stderr", (done) ->
         util = require "util"
         util._old_error = util.error
