@@ -9,7 +9,7 @@ mock_robot =
     mock_robot.onError = null
     mock_robot.logs = { error: [], debug: [] }
 
-gh = require("..") mock_robot
+gh = require("../src/githubot") mock_robot
 nock = require("nock")
 module.exports = [ gh, require("assert"), nock, mock_robot ]
 

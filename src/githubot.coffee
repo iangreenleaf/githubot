@@ -2,7 +2,7 @@ http = require "scoped-http-client"
 async = require "async"
 querystring = require "querystring"
 
-version = require("./package.json")["version"]
+version = require("../package.json")["version"]
 
 class Github
   constructor: (@logger, @options) ->
@@ -99,60 +99,9 @@ class Github
   _errorHandler: (response) ->
     @_loggerErrorHandler response
 
-  branches: (repo, cb) ->
-    if cb?
-      @get("repos/#{@qualified_repo repo}/branches", cb)
-    else
-      create: (branchName, opts, cb) =>
-        [opts,cb] = [{},opts] unless cb?
-        opts.from ?= "master"
-        @get "repos/#{@qualified_repo repo}/git/refs/heads/#{opts.from}", (json) =>
-          sha = json.object.sha
-          @post "repos/#{@qualified_repo repo}/git/refs",
-            ref: "refs/heads/#{branchName}", sha: sha
-            , (data) ->
-              cb name: branchName, commit: { sha: data.object.sha, url: data.object.url }
-      delete: (branchNames..., cb) =>
-        actions = []
-        for branchName in branchNames
-          do (branchName) =>
-            actions.push (done) =>
-              @request "DELETE", "repos/#{@qualified_repo repo}/git/refs/heads/#{branchName}", done
-        async.parallel actions, cb
-      merge: (head, opts, cb) =>
-        [opts,cb] = [{},opts] unless cb?
-        body =
-          base: opts.base ? opts.into ? "master"
-          head: head
-        if opts.message?
-          body.commit_message = opts.message
-        @post "repos/#{@qualified_repo repo}/merges", body, (data) =>
-          unless data?
-            return @logger.error "Nothing to merge"
-          cb sha: data.sha, message: data.commit.message, url: data.url
+  branches: require './branches'
 
-  deployments: (repo, cb) ->
-    # These features are in preview mode
-    self = @withOptions apiVersion: 'cannonball-preview'
-    if cb?
-      self.get("repos/#{self.qualified_repo repo}/deployments", cb)
-    else
-      create: (branchName, opts, cb) =>
-        [opts,cb] = [{},opts] unless cb?
-        body =
-          ref: branchName ? "master"
-        if opts.force?
-          body.force = opts.force
-        if opts.payload?
-          body.payload = opts.payload
-        if opts.auto_merge?
-          body.auto_merge = opts.auto_merge
-        if opts.description?
-          body.description = opts.description
-        self.post "repos/#{self.qualified_repo repo}/deployments", body, (data) =>
-          cb sha: data.sha, description: data.description, url: data.url
-      status: (id, cb) =>
-        self.get("repos/#{self.qualified_repo repo}/deployments/#{id}/statuses", cb)
+  deployments: require './deployments'
 
   _opt: (optName) ->
     @options ?= {}

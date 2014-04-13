@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git@github.com:iangreenleaf/githubot.git"
   },
-  "main": "./githubot",
+  "main": "./src/githubot",
   "scripts": {
     "test": "make test"
   },
