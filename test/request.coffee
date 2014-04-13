@@ -25,7 +25,7 @@ describe "github api", ->
         gh.request "GET", "repos/foo/bar/branches", success done
         delete process.env.HUBOT_GITHUB_TOKEN
       it "includes accept header", (done) ->
-        network.matchHeader('Accept', 'application/vnd.github.beta+json')
+        network.matchHeader('Accept', 'application/vnd.github.v3+json')
         gh.request "GET", "repos/foo/bar/branches", success done
       it "allows setting API version", (done) ->
         ghPreview = require("..") mock_robot, apiVersion: 'preview'
@@ -45,7 +45,7 @@ describe "github api", ->
           network.done()
           network2 = nock("https://api.github.com")
             .get("/repos/baz/bar/branches")
-            .matchHeader('Accept', 'application/vnd.github.beta+json')
+            .matchHeader('Accept', 'application/vnd.github.v3+json')
             .reply(200, response)
           # Should revert to the defaults on this request
           gh.request "GET", "repos/baz/bar/branches", ->

@@ -116,7 +116,7 @@ in increasing order of precedence:
 
 * `apiVersion`/`process.env.HUBOT_GITHUB_API_VERSION`:
   [Version of the API](http://developer.github.com/v3/versions/)
-  to access. Defaults to 'beta'.
+  to access. Defaults to 'v3'.
 
 * `defaultUser`/`process.env.HUBOT_GITHUB_USER`:
   Default GitHub username to use if one is not given.

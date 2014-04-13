@@ -170,7 +170,7 @@ class Github
       when "apiRoot"
         process.env.HUBOT_GITHUB_API ? "https://api.github.com"
       when "apiVersion"
-        process.env.HUBOT_GITHUB_API_VERSION ? "beta"
+        process.env.HUBOT_GITHUB_API_VERSION ? "v3"
       else null
 
 module.exports = github = (robot, options = {}) ->
