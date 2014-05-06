@@ -36,7 +36,10 @@ class Github
     if url[0..3] isnt "http"
       url = "/#{url}" unless url[0] is "/"
       url = "#{url_api_base}#{url}"
-    req = http.create(url).header("Accept", "application/vnd.github.#{@_opt "apiVersion"}+json")
+
+    client_options = rejectUnauthorized: !@_opt "selfSignedCert"
+
+    req = http.create(url, client_options).header("Accept", "application/vnd.github.#{@_opt "apiVersion"}+json")
     req = req.header("User-Agent", "GitHubot/#{version}")
     oauth_token = @_opt "token"
     req = req.header("Authorization", "token #{oauth_token}") if oauth_token?
@@ -120,6 +123,8 @@ class Github
         process.env.HUBOT_GITHUB_API ? "https://api.github.com"
       when "apiVersion"
         process.env.HUBOT_GITHUB_API_VERSION ? "v3"
+      when "selfSignedCert"
+        process.env.HUBOT_GITHUB_SELF_SIGNED_CERT ? false
       else null
 
 module.exports = github = (robot, options = {}) ->
