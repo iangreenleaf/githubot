@@ -101,6 +101,8 @@ class Github
 
   branches: require './branches'
 
+  commits: require './commits'
+
   deployments: require './deployments'
 
   _opt: (optName) ->
@@ -120,6 +122,10 @@ class Github
         process.env.HUBOT_GITHUB_API ? "https://api.github.com"
       when "apiVersion"
         process.env.HUBOT_GITHUB_API_VERSION ? "v3"
+      when "gitio"
+        process.env.HUBOT_GITIO
+      when "oneline"
+        process.env.HUBOT_COMMIT_ONELINE
       else null
 
 module.exports = github = (robot, options = {}) ->

@@ -129,6 +129,13 @@ in increasing order of precedence:
 * `concurrentRequests`/`process.env.HUBOT_CONCURRENT_REQUESTS`:
   Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
 
+* `gitio`/`process.env.HUBOT_GITIO`:
+  If truthy, use [Git.io][] to shorten commit links when formatting.
+
+* `oneline`/`process.env.HUBOT_COMMIT_ONELINE`:
+  If truthy, truncate commit messages to the first line when
+  formatting.
+
 ## Bespoke API access ##
 
 Mostly a work in progress, but here's a taste of what I have in mind:
@@ -179,6 +186,66 @@ gh.branches( "foo/bar" ).merge "my_radical_feature", message: "Merge my radical 
 gh.branches( "foo/bar" ).delete "my_radical_feature", ->
   console.log "Deleted my branch!"
 ```
+
+### Commits ###
+
+#### Get commit details ####
+
+```coffeescript
+gh.commits "iangreenleaf/githubot", "63bf7f86c67066158a2ee24d0fcf41177e54a21d", (commit) ->
+  console.log commit
+```
+
+GitHub's commit objects vary depending on the endpoint.  This one is
+just a wrapper around [GET
+/repos/:owner/:repo/commits/:sha][get-commit].
+
+#### Format commit objects ####
+
+Besides retrieving commit messages with `commits`, you can call
+`commits` without arguments to access the data-massaging `formatter`
+method.  This is useful for pretty-printing commit messages, and you
+can use the default output:
+
+```coffeescript
+gh.commits "iangreenleaf/githubot", "63bf7f86c67066158a2ee24d0fcf41177e54a21d", (commit) ->
+  gh.commits().format commit, (commit) ->
+    console.log "#{commit.message} (#{commit.html_url})"
+```
+
+```
+Better paths to package in tests
+
+Fixes test errors in 0.6.x (https://github.com/iangreenleaf/githubot/commit/63bf7f86c67066158a2ee24d0fcf41177e54a21d)
+```
+
+Or You can also use the `gitio` and `oneline` [options](#options) to
+adjust the `message` and `html_url` attributes:
+
+```coffeescript
+gh.commits "iangreenleaf/githubot", "63bf7f86c67066158a2ee24d0fcf41177e54a21d", (commit) ->
+  gh.withOptions(
+    gitio: true
+    oneline: true
+    )
+    .commits().format commit, (commit) ->
+      console.log "#{commit.message} (#{commit.html_url})"
+```
+
+```
+Better paths to package in tests (http://git.io/l5mwmQ)
+```
+
+The formatter can take input commit objects from the following
+endpoints:
+
+* [GET /repos/:owner/:repo/commits/:sha][get-commit]
+* [GET /repos/:owner/:repo/git/commits/:sha][get-commit]
+* The [push event][push-event]
+
+Which all store data in slightly different ways.  In any case, the
+object passed to the `format` callback will have `commit.message` and
+`commit.html_url`.
 
 ### Deployments ###
 
@@ -231,3 +298,7 @@ ask and I can probably point you in the right direction.
 
 
 [Build Status]: https://travis-ci.org/iangreenleaf/githubot.png?branch=master
+[Git.io]: http://git.io/
+[get-commit]: https://developer.github.com/v3/repos/commits/#get-a-single-commit
+[get-git-commit]: https://developer.github.com/v3/git/commits/#get-a-commit
+[push-event]: https://developer.github.com/v3/activity/events/types/#pushevent

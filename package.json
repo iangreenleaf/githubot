@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "scoped-http-client": ">= 0.9.8",
-    "async": "0.2.x"
+    "async": "0.2.x",
+    "gitio2": ">= 2.0.0"
   },
   "devDependencies": {
     "mocha": "1.x",
