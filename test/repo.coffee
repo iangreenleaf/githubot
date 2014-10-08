@@ -228,3 +228,40 @@ describe "repo api", ->
         gh.deployments("foo/bar").status @statusId, (status) ->
           network.done()
           done()
+
+  describe "commits", ->
+    response = [ { sha: "abcdeg", url: "xxx" } ]
+    network = null
+    success = (done) ->
+      (body) ->
+        network.done()
+        done()
+    beforeEach ->
+      network = nock("https://api.github.com")
+        .get("/repos/foo/bar/commits")
+        .reply(200, response)
+    it "accepts a full repo with a commit hash", (done) ->
+      network = nock("https://api.github.com")
+        .get("/repos/foo/bar/commits/abcdeg")
+        .reply(200, response)
+      gh.commits "foo/bar", "abcdeg", success done
+    it "accepts a full repo without a commit hash", (done) ->
+      gh.commits "foo/bar", null, success done
+    it "accepts an unqualified repo", (done) ->
+      process.env.HUBOT_GITHUB_USER = "foo"
+      gh.commits "bar", null, success done
+      delete process.env.HUBOT_GITHUB_USER
+    it "returns json", (done) ->
+      gh.commits "foo/bar", null, (data) ->
+        assert.deepEqual response, data
+        done()
+    it "allows per-request overrides", (done) ->
+      network = nock("https://special.api.dev")
+        .get("/repos/bar/baz/commits")
+        .reply(200, response)
+      gh.withOptions(
+          apiRoot: "https://special.api.dev"
+          defaultUser: "bar"
+          defaultRepo: "baz"
+        )
+        .commits null, null, success done
