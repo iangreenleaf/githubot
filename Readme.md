@@ -50,7 +50,7 @@ If `process.env.HUBOT_GITHUB_TOKEN` is present, you're automatically authenticat
 
 If you don't have a token yet, run this:
 
-    curl -i https://api.github.com/authorizations -d '{"scopes":["repo"]}' -u "yourusername"
+    curl -i https://api.github.com/authorizations -d '{"note":"githubot","scopes":["repo"]}' -u "yourusername"
 
 Enter your Github password when prompted. When you get a response, look for the "token" value.
 
