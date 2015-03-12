@@ -71,6 +71,8 @@ The callback takes a `response` argument with the following keys:
 * `statusCode`: The status code of the API response, if present.
 * `body`: The body of the API response, if present.
 
+You can also pass an error handler in [the options](#available-options) instead.
+
 ## Helpful Hubot ##
 
 If `process.env.HUBOT_GITHUB_USER` is present, we can help you guess a repo's full name:
@@ -128,6 +130,9 @@ in increasing order of precedence:
 
 * `concurrentRequests`/`process.env.HUBOT_CONCURRENT_REQUESTS`:
   Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
+
+* `errorHandler`:
+  Function for custom error handling logic. See [handling errors](#handling-errors) for more details.
 
 ## Bespoke API access ##
 
