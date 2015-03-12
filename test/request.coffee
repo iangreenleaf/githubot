@@ -238,13 +238,12 @@ describe "github api", ->
       before ->
         gh = require("../src/githubot")
       it "complains to stderr", (done) ->
-        util = require "util"
-        util._old_error = util.error
-        util.error = (msg) ->
+        console._old_error = console.error
+        console.error = (msg) ->
           if msg.match /bad credentials/i
-            util.error = util._old_error
+            console.error = @_old_error
             done()
           else
             @_old_error.call process.stderr, msg
-        network.reply(401, message: "Bad credentials")
+        network.reply(401, message: "Bad credentials!")
         gh.get "/foo", never_called

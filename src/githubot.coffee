@@ -128,8 +128,7 @@ github[method] = func for method,func of Github.prototype
 
 github.logger = {
   error: (msg) ->
-    util = require "util"
-    util.error "ERROR: #{msg}"
+    console.error "ERROR: #{msg}"
   debug: ->
 }
 
