@@ -219,6 +219,21 @@ describe "github api", ->
         gh.handleErrors cb
         gh.get "/foo", never_called
 
+      it "works in combination with withOptions", (done) ->
+        network.matchHeader('Accept', 'application/vnd.github.special+json')
+        network.reply(406, message: "I hate you!")
+        gh.handleErrors (response) ->
+          assert.equal 406, response.statusCode
+          done()
+        gh.withOptions(apiVersion: 'special').get "/foo", never_called
+
+      it "can be passed as withOptions", (done) ->
+        network.reply(406, message: "I hate you!")
+        errHandler = (response) ->
+          assert.equal 406, response.statusCode
+          done()
+        gh.withOptions(errorHandler: errHandler).get "/foo", never_called
+
     describe "without robot given", ->
       before ->
         gh = require("../src/githubot")

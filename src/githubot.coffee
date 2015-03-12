@@ -87,9 +87,7 @@ class Github
     @request "PATCH", url, data, cb
 
   handleErrors: (callback) ->
-    @_errorHandler = (response) =>
-      callback response
-      @_loggerErrorHandler response
+    @options.errorHandler = callback
 
   _loggerErrorHandler: (response) ->
     message = response.error
@@ -97,6 +95,7 @@ class Github
     @logger.error message
 
   _errorHandler: (response) ->
+    @options.errorHandler?(response)
     @_loggerErrorHandler response
 
   branches: require './branches'
