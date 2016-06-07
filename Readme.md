@@ -212,6 +212,15 @@ gh.deployments("foo/bar").status deployId, (deploys) ->
   console.log deploys[0].state
 ```
 
+### Pull Requests ###
+
+#### Merge a Pull Request ####
+
+```coffeescript
+gh.pullrequest("foo/bar").pr_merge prNumber, (result) ->
+  console.log result.sha
+```
+
 ## Contributing ##
 
 Install the dependencies:
