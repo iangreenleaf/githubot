@@ -102,6 +102,8 @@ class Github
 
   deployments: require './deployments'
 
+  pullrequest: require './pullrequest'
+
   _opt: (optName) ->
     @options ?= {}
     @options[optName] ? @_optFromEnv(optName)
