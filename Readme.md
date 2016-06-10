@@ -217,7 +217,7 @@ gh.deployments("foo/bar").status deployId, (deploys) ->
 #### Merge a Pull Request ####
 
 ```coffeescript
-gh.pullrequest("foo/bar").pr_merge prNumber, (result) ->
+gh.pull_requests("foo/bar").merge prNumber, (result) ->
   console.log result.sha
 ```
 

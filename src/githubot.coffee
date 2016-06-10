@@ -102,7 +102,7 @@ class Github
 
   deployments: require './deployments'
 
-  pullrequest: require './pullrequest'
+  pull_requests: require './pull_requests'
 
   _opt: (optName) ->
     @options ?= {}
