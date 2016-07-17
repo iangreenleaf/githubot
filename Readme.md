@@ -54,6 +54,8 @@ If you don't have a token yet, run this:
 
 Enter your Github password when prompted. When you get a response, look for the "token" value.
 
+If you have two-factor authentication enabled, you'll have to append `-H 'X-GitHub-OTP: 123456'` to the end of the above command, or you'll receive HTTP 401 Unauthorized instead of your token.
+
 ## Handling errors ##
 
 GitHubot will log errors automatically if it has a logger. Used with Hubot, these will go to the Hubot logger.
