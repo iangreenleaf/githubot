@@ -167,30 +167,27 @@ describe "repo api", ->
           network.done()
           done()
 
-      it "notifies about no-op", (done) ->
-        network = nock("https://api.github.com")
-          .post("/repos/foo/bar/merges",
-            base: "master", head: @branchName)
-          .reply(204)
-        gh.branches("foo/bar").merge @branchName, ->
-          assert.fail null, null, "Should not call callback"
-        mock_robot.onError = (msg) ->
-          assert.ok /nothing to merge/i.exec msg
-          network.done()
-          done()
+      context "when no-op", (done) ->
+        beforeEach ->
+          network = nock("https://api.github.com")
+            .post("/repos/foo/bar/merges",
+              base: "master", head: @branchName)
+            .reply(204)
 
-      it "notifies custom error handler about no-op", (done) ->
-        network = nock("https://api.github.com")
-          .post("/repos/foo/bar/merges",
-            base: "master", head: @branchName)
-          .reply(204)
-        errHandler = (response) ->
-          assert.ok /nothing to merge/i.exec response.error
-          network.done()
-          done()
-        gh.withOptions(errorHandler: errHandler).branches("foo/bar").merge @branchName, ->
-          assert.fail null, null, "Should not call callback"
+        it "errors", (done) ->
+          gh.branches("foo/bar").merge @branchName, ->
+            assert.fail null, null, "Should not call callback"
+          mock_robot.onError = (msg) ->
+            assert.ok /nothing to merge/i.exec msg
+            network.done()
+            done()
 
+        it "notifies custom error handler", (done) ->
+          errHandler = (response) ->
+            assert.ok /nothing to merge/i.exec response.error
+            network.done()
+            done()
+          gh.withOptions(errorHandler: errHandler).branches("foo/bar").merge @branchName
 
   describe "deployments", ->
     describe "create deployment", ->
