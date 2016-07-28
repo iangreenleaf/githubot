@@ -179,6 +179,19 @@ describe "repo api", ->
           network.done()
           done()
 
+      it "notifies custom error handler about no-op", (done) ->
+        network = nock("https://api.github.com")
+          .post("/repos/foo/bar/merges",
+            base: "master", head: @branchName)
+          .reply(204)
+        errHandler = (response) ->
+          assert.ok /nothing to merge/i.exec response.error
+          network.done()
+          done()
+        gh.withOptions(errorHandler: errHandler).branches("foo/bar").merge @branchName, ->
+          assert.fail null, null, "Should not call callback"
+
+
   describe "deployments", ->
     describe "create deployment", ->
       beforeEach ->

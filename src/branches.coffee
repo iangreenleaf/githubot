@@ -29,5 +29,6 @@ module.exports = (repo, cb) ->
         body.commit_message = opts.message
       @post "repos/#{@qualified_repo repo}/merges", body, (data) =>
         unless data?
-          return @logger.error "Nothing to merge"
+          return @_errorHandler
+            error: "Nothing to merge"
         cb sha: data.sha, message: data.commit.message, url: data.url
