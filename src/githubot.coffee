@@ -13,7 +13,7 @@ class Github
     newOpts = {}
     newOpts[k] = v for k,v of @options
     newOpts[k] = v for k,v of specialOptions
-    g = new @constructor @logger, newOpts
+    g = new Github @logger, newOpts
     g.requestQueue = @requestQueue
     g
   qualified_repo: (repo) ->
