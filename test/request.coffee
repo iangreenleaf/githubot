@@ -34,6 +34,10 @@ describe "github api", ->
       it "allows setting API version for single request", (done) ->
         network.matchHeader('Accept', 'application/vnd.github.special+json')
         gh.withOptions(apiVersion: 'special').request "GET", "repos/foo/bar/branches", success done
+      it "allows setting an API version for single request without robot", (done) ->
+        noRobot = require("../src/githubot")
+        newRobot = noRobot.withOptions('Accept', 'application/vnd.github.preview+json')
+        newRobot.request "GET", "repos/foo/bar/branches", success done
       it "allows setting the oauth token for single request", (done) ->
         process.env.HUBOT_GITHUB_TOKEN = "789xyz"
         network.matchHeader("Authorization", "token abc")
