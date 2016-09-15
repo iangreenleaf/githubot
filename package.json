@@ -2,7 +2,7 @@
   "author": "Ian Young <ian.greenleaf@gmail.com>",
   "name": "githubot",
   "description": "Hubot-compatible Github API wrapper for Node.js",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/iangreenleaf/githubot",
   "license": "MIT",
   "repository": {
