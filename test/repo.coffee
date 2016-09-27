@@ -238,3 +238,61 @@ describe "repo api", ->
         gh.deployments("foo/bar").status @statusId, (status) ->
           network.done()
           done()
+
+  describe "pull_requests", ->
+    response = [ { id: "123", state: "open", title: "xxx" } ]
+    network = null
+    success = (done) ->
+      (body) ->
+        network.done()
+        done()
+    beforeEach ->
+      network = nock("https://api.github.com")
+        .get("/repos/foo/bar/pulls")
+        .reply(200, response)
+    it "accepts a full repo", (done) ->
+      gh.pull_requests "foo/bar", success done
+    it "accepts an unqualified repo", (done) ->
+      process.env.HUBOT_GITHUB_USER = "foo"
+      gh.pull_requests "bar", success done
+      delete process.env.HUBOT_GITHUB_USER
+    it "returns json", (done) ->
+      gh.pull_requests "foo/bar", (data) ->
+        assert.deepEqual response, data
+        done()
+    it "allows per-request overrides", (done) ->
+      network = nock("https://special.api.dev")
+        .get("/repos/bar/baz/pulls")
+        .reply(200, response)
+      gh.withOptions(
+          apiRoot: "https://special.api.dev"
+          defaultUser: "bar"
+          defaultRepo: "baz"
+        )
+        .pull_requests null, success done
+      delete process.env.HUBOT_GITHUB_USER
+
+    describe "merge", ->
+      beforeEach -> 
+        @prNumber = 123
+        @title = "test title"
+        @message = "test message"
+        @mergeSha = "aaaa9999"
+
+      it "performing merge", ->
+        network = nock("https://api.github.com")
+          .get("/repos/foo/bar/pulls/#{@prNumber}")
+          .reply(
+            200
+            , { head: { sha: @mergeSha }
+            }
+          )
+          .put("/repos/foo/bar/pulls/#{@prNumber}/merge", 
+             title: @title, message: @message, squash: @squash, sha: @mergeSha)
+          .reply(
+            200
+            , sha: "xxxxx", message: "merge message", merged: "merged"
+          )
+        gh.pull_requests("foo/bar").merge @prNumber, (status) =>
+          network.done()
+          done()
