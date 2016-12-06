@@ -63,17 +63,15 @@ GitHubot will log errors automatically if it has a logger. Used with Hubot, thes
 If your script would like to catch errors as well, define an extra callback:
 
 ```coffeescript
-github.handleErrors (response) ->
-  console.log "Oh no! #{response.statusCode}!"
+github.handleErrors (callback) ->
+  console.log "Oh no! #{callback.statusCode}!"
 ```
 
-The callback takes a `response` argument with the following keys:
+The callback takes a `callback` argument with the following keys:
 
 * `error`: The error message.
 * `statusCode`: The status code of the API response, if present.
 * `body`: The body of the API response, if present.
-
-You can also pass an error handler in [the options](#available-options) instead.
 
 ## Helpful Hubot ##
 
@@ -132,9 +130,6 @@ in increasing order of precedence:
 
 * `concurrentRequests`/`process.env.HUBOT_CONCURRENT_REQUESTS`:
   Limits the allowed number of concurrent requests to the GitHub API. Defaults to 20.
-
-* `errorHandler`:
-  Function for custom error handling logic. See [handling errors](#handling-errors) for more details.
 
 ## Bespoke API access ##
 
